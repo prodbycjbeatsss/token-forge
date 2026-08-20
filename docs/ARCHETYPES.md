@@ -1,72 +1,81 @@
-TokenForge — Archetypes
+# TokenForge — Archetypes
 
-Project: TokenForge
-Document: Archetypes
-Status: Active
-Version: 1.0
-Purpose: Define how TokenForge uses established design-system references and TokenForge-native design philosophies as blueprints for generating project-specific token systems.
+**Project:** TokenForge  
+**Document:** Archetypes  
+**Status:** Active  
+**Version:** 1.1  
+**Last Updated:** 21 August 2026  
+**Purpose:** Define how TokenForge uses established design-system references and TokenForge-native design philosophies as blueprints for generating project-specific token systems.
 
 ---
 
-1. Purpose
+## 1. Purpose
 
 Archetypes are the starting blueprints used by TokenForge to generate a project's design-token system.
 
-An archetype defines a particular design philosophy, token architecture and set of recommended relationships.
+An archetype defines how the common Token Model is organised and configured for a particular design-system philosophy.
 
-It provides structure and direction without preventing the user from creating their own system.
+It can define:
 
-The archetype is therefore not the finished design system.
+- Token groups
+- Scales
+- Semantic roles
+- Naming conventions
+- Recommended relationships
+- Generation rules
+- Recommended states
+- Other system-level configuration
 
-Archetype
-    ↓
-Generated Token System
-    ↓
-User Refinement
-    ↓
-User's Design System
+An archetype does **not** define a separate token model.
 
-This document builds on the principles established in:
+All archetypes use the common Token Model defined in `TOKEN-MODEL.md`.
 
-- "PRODUCT.md"
-- "TOKEN-MODEL.md"
-- "SOURCES.md"
+The core relationship is:
 
-"PRODUCT.md" defines the product's purpose and scope.
+    Token Model
+         ↓
+    Archetype
+         ↓
+    Generated Token System
+         ↓
+    User Refinement
+         ↓
+    Approved Token System
 
-"TOKEN-MODEL.md" defines the underlying structure that TokenForge uses to represent tokens.
-
-"SOURCES.md" defines the authoritative references used to inform TokenForge's design-system knowledge.
+The archetype is therefore a starting architecture rather than the finished design system.
 
 ---
 
-2. Core Principle
+## 2. Core Principle
 
-«An archetype provides a proven starting structure; the user owns the resulting system.»
+> **An archetype provides a coherent starting structure; the user owns the resulting system.**
 
-TokenForge should avoid forcing every user to construct a token architecture from an empty canvas.
+TokenForge should avoid forcing users to construct a token architecture from an empty canvas.
 
-Instead, the user selects an archetype that provides a coherent starting point.
+Instead, the user selects an archetype that provides a considered starting structure.
 
-The user can then modify the generated system to suit their brand, product and preferences.
+The user can then modify the generated system to suit their brand, product and requirements.
 
 Archetypes should therefore optimise for:
 
-- Strong starting points
+- Coherent starting points
 - Consistent architecture
-- Proven design principles
+- Established design principles where applicable
 - Clear semantic relationships
+- Appropriate defaults
 - Customisability
 - Reproducibility
 - Extensibility
 
+The archetype should reduce unnecessary decisions without preventing meaningful user control.
+
 ---
 
-3. Archetype Categories
+## 3. Archetype Categories
 
-TokenForge has two categories of archetype.
+TokenForge V1 contains two categories of archetype.
 
-3.1 Established-System Archetypes
+### 3.1 Established-System Archetypes
 
 Established-system archetypes are informed by publicly documented and established design systems.
 
@@ -78,11 +87,11 @@ V1 includes:
 
 These archetypes use recognised design-system principles as references while generating a system specifically for the TokenForge user.
 
-They should not be presented as official versions of the referenced systems.
+They must not be presented as official implementations of the referenced systems.
 
 ---
 
-3.2 TokenForge-Native Archetypes
+### 3.2 TokenForge-Native Archetypes
 
 TokenForge-native archetypes are created by TokenForge around broader design philosophies rather than being directly based on one external design system.
 
@@ -93,7 +102,7 @@ V1 includes:
 
 Future native archetypes may be introduced when there is a clear product or user need.
 
-Potential future directions may include:
+Potential future directions include:
 
 - Expressive
 - Utility
@@ -104,25 +113,124 @@ These are possibilities rather than V1 commitments.
 
 ---
 
-4. Established-System References
+## 4. Common Token Model
 
-Established-system archetypes may draw from publicly available documentation, specifications and guidance published by the organisations responsible for those systems.
+Every archetype uses the same underlying Token Model.
 
-Examples include:
+The Token Model defines what TokenForge can represent.
 
-- Google Material Design
-- Apple Human Interface Guidelines
-- Microsoft Fluent
-- IBM Carbon
-- Other suitably documented public systems considered for future archetypes
+The archetype defines how those capabilities are configured.
 
-The relevant authoritative sources must be recorded in "SOURCES.md".
+    Common Token Model
+            ↓
+        Archetype
+            ↓
+    Specific configuration
+            ↓
+    Generated Token System
 
-TokenForge should favour primary sources wherever possible.
+The archetype therefore does not create its own token types.
+
+For example, an archetype can decide to use:
+
+- Colour
+- Dimension
+- Typography
+- Shadow
+- Border
+- Motion
+
+in different ways, but it cannot invent an incompatible token type outside the Token Model without changing the Token Model itself.
+
+The common model allows different design philosophies to produce substantially different systems while remaining compatible with TokenForge's Components, Validation and Export systems.
 
 ---
 
-5. Reference vs Reproduction
+## 5. Archetype Configuration
+
+An archetype may configure the following aspects of the Token Model:
+
+- Token groups
+- Primitive token structure
+- Semantic token structure
+- Naming conventions
+- Scale definitions
+- Semantic roles
+- Recommended references
+- State requirements
+- Mode expectations
+- Generation rules
+- Recommended defaults
+- Component usage expectations
+- Validation expectations
+
+An archetype should configure the common model rather than redefine it.
+
+For example:
+
+    Token Model
+         ↓
+    Dimension
+         ↓
+    Archetype
+         ↓
+    Spacing scale
+         ↓
+    Project spacing tokens
+
+The Token Model provides the capability.
+
+The archetype determines how that capability is used.
+
+---
+
+## 6. Token Types Across Archetypes
+
+Different archetypes do not need to use every available token type in exactly the same way.
+
+For example, one archetype may place greater emphasis on:
+
+- Typography
+- Spacing
+- Surface relationships
+
+while another may place greater emphasis on:
+
+- Tonal colour relationships
+- Elevation
+- Interaction states
+
+Both can still use the same underlying Token Model.
+
+This distinction is important because established design systems do not necessarily organise their design languages identically.
+
+Material, Apple and Fluent may all use concepts such as colour, typography, spacing, shape and elevation, but their structures, naming conventions, relationships and intended usage can differ.
+
+TokenForge therefore models the **common capabilities**, while archetypes model the **design-system-specific organisation**.
+
+---
+
+## 7. Established-System References
+
+Established-system archetypes may draw from publicly available documentation, specifications and guidance published by the organisations responsible for those systems.
+
+Primary references include:
+
+- Google Material Design / Material 3
+- Apple Human Interface Guidelines
+- Microsoft Fluent
+
+Other systems may be considered for future archetypes.
+
+The relevant authoritative sources must be recorded in `SOURCES.md`.
+
+TokenForge should favour primary sources wherever possible.
+
+Research and references inform the archetype but do not turn TokenForge into an implementation of the external system.
+
+---
+
+## 8. Reference vs Reproduction
 
 An established-system archetype is informed by its reference system.
 
@@ -130,17 +238,19 @@ It is not intended to reproduce the external design system in its entirety.
 
 For example:
 
-Material Design principles
-        +
-User's brand
-        +
-TokenForge generation
-        ↓
-Material Inspired TokenForge system
+    Material Design principles
+             +
+        User's brand
+             +
+      TokenForge Model
+             +
+      Archetype configuration
+             ↓
+    Material Inspired TokenForge system
 
 The resulting system belongs to the user.
 
-TokenForge should therefore use established systems to inform:
+TokenForge should use established systems to inform appropriate areas such as:
 
 - Design philosophy
 - Token architecture
@@ -155,7 +265,7 @@ TokenForge should not imply that a generated system is an official implementatio
 
 ---
 
-6. Attribution
+## 9. Attribution
 
 Established-system archetypes should clearly identify their reference system.
 
@@ -163,16 +273,14 @@ Attribution should be visible during archetype selection.
 
 For example:
 
-Material Inspired
+    Material Inspired
 
-A token architecture influenced by Google's Material Design
-principles.
+    A token architecture influenced by Google's
+    Material Design principles.
 
-Reference: Google Material 3
+    Reference: Google Material 3
 
-The archetype selection card is the primary location for this attribution within the product.
-
-The relevant authoritative reference should also be recorded in "SOURCES.md".
+The relevant authoritative reference should also be recorded in `SOURCES.md`.
 
 Attribution, trademark and licensing requirements must be reviewed against the current terms applicable to each referenced system before implementation.
 
@@ -180,44 +288,11 @@ TokenForge should not make legal claims about third-party systems without verify
 
 ---
 
-7. Archetype Blueprint
-
-Each archetype acts as a configuration layer over the Token Model defined in "TOKEN-MODEL.md".
-
-An archetype may define:
-
-- Token groups
-- Primitive token structure
-- Semantic token roles
-- Naming conventions
-- Scales
-- Recommended references
-- Interaction states
-- Component requirements
-- Theme/mode expectations
-- Generation rules
-- Validation expectations
-- Recommended defaults
-
-The archetype should not redefine the underlying token model.
-
-TOKEN-MODEL
-    ↓
-Common token capabilities
-    ↓
-ARCHETYPE
-    ↓
-Specific configuration
-    ↓
-PROJECT TOKEN SYSTEM
-
----
-
-8. Archetype Generation
+## 10. Archetype Generation
 
 When a user selects an archetype, TokenForge uses it as the blueprint for generating the initial token system.
 
-The generation process should combine:
+Generation combines:
 
 1. The selected archetype
 2. User-provided foundations
@@ -227,52 +302,192 @@ The generation process should combine:
 
 Example:
 
-User Brand Colour
-        +
-Material Inspired Archetype
-        +
-Token Model
-        ↓
-Generated Material-inspired token system
+    User foundations
+           +
+    Material Inspired
+           +
+      Token Model
+           ↓
+    Generated token system
 
-The generated result should be treated as a starting point rather than an immutable prescription.
+The generated result is a starting point rather than an immutable prescription.
 
----
-
-9. User Ownership and Customisation
-
-Users are expected to modify the generated system.
-
-TokenForge should support meaningful customisation without requiring the user to abandon the selected archetype.
-
-Users may be able to change:
-
-- Token values
-- Token names
-- Scales
-- Semantic assignments
-- References
-- Supported token groups
-- Supported states
-- Other properties permitted by the system
-
-The archetype establishes the initial structure.
-
-The user determines the final system.
-
-Archetype
-    ↓
-Recommendation
-    ↓
-User decisions
-    ↓
-Final system
-
-TokenForge should not treat divergence from the original archetype as an error.
+The user must be able to inspect and refine the generated system.
 
 ---
 
-10. Archetype Integrity
+## 11. Foundations and Archetypes
+
+Foundations provide the project-specific inputs from which the archetype generates the initial system.
+
+Examples include:
+
+- Brand colours
+- Neutral colours
+- Typography preferences
+- Spacing preferences
+- Shape preferences
+- Other supported foundational values
+
+The same foundation can therefore produce different results depending on the selected archetype.
+
+For example:
+
+    Same brand colour
+          │
+          ├── Material Inspired
+          │        ↓
+          │   Material-inspired relationships
+          │
+          ├── Apple Inspired
+          │        ↓
+          │   Apple-inspired relationships
+          │
+          └── Minimal
+                   ↓
+              Minimal relationships
+
+The foundation is the input.
+
+The archetype determines how that input is organised into the token system.
+
+---
+
+## 12. Naming Conventions
+
+Naming is part of an archetype's architecture.
+
+An archetype may define recommended naming conventions for categories such as:
+
+- Spacing
+- Colour scales
+- Typography scales
+- Radius
+- Motion
+- Other primitive categories
+
+Naming conventions must operate consistently at the category level.
+
+The user should not be able to create arbitrary mixtures of naming conventions within a category.
+
+For example, a spacing category should not become:
+
+    xs
+    spacing.2
+    medium
+    lg
+    whatever
+
+Instead, if the user changes the spacing naming convention, TokenForge should transform the complete category consistently.
+
+For example:
+
+    Numeric
+
+    1
+    2
+    3
+    4
+    5
+    6
+
+may become:
+
+    T-shirt
+
+    xs
+    sm
+    md
+    lg
+    xl
+    2xl
+
+while preserving the underlying scale relationships.
+
+---
+
+## 13. Primitive Naming
+
+Primitive naming can provide greater customisation than semantic naming.
+
+An archetype may provide supported conventions for its primitive categories.
+
+The user can select or customise a supported convention where permitted.
+
+However, the underlying token relationships must remain unchanged.
+
+Changing:
+
+    spacing.1
+    spacing.2
+    spacing.3
+
+to:
+
+    xs
+    sm
+    md
+
+changes the names.
+
+It does not change which value is smaller, larger or related to another token.
+
+TokenForge should favour controlled naming transformations rather than unrestricted individual renaming.
+
+---
+
+## 14. Semantic Naming
+
+Semantic naming requires stronger architectural constraints.
+
+Semantic names communicate design intent.
+
+Examples include:
+
+    text
+        primary
+        secondary
+
+    surface
+        default
+        raised
+
+    action
+        primary
+        secondary
+
+    border
+        default
+
+The exact semantic vocabulary is determined by the archetype.
+
+A user may customise semantic naming where TokenForge provides a supported convention, but arbitrary changes that make the architecture ambiguous or contradictory should not be permitted.
+
+The goal is to allow personalisation without allowing the semantic vocabulary to lose coherence.
+
+---
+
+## 15. Component Naming and Structure
+
+Component-level naming and structure are more tightly controlled than primitive naming.
+
+An archetype may establish recommended component roles and states, but the component system itself is defined in `COMPONENTS.md`.
+
+The relationship is:
+
+    Archetype
+         ↓
+    Recommended roles/states
+         ↓
+    Component System
+         ↓
+    Token consumption
+
+The archetype must not create a separate component-token architecture outside the common Token Model.
+
+---
+
+## 16. Archetype Integrity
 
 User customisation should not automatically be treated as a violation of the archetype.
 
@@ -282,24 +497,75 @@ For example, a user selecting Material Inspired may substantially alter:
 - Typography
 - Spacing
 - Radius
-- Semantic naming
-- Component states
+- Semantic values
+- Supported naming conventions
 
-The system can still remain based on the Material Inspired starting architecture.
+The project can still retain the Material Inspired archetype as its original blueprint.
 
 TokenForge should distinguish between:
 
-Archetype configuration
+    Original Archetype Configuration
 
-and
+and:
 
-User customisation.
+    Current User-Approved Token System
 
-This distinction may become useful for future auditing, migration and documentation features.
+This distinction allows users to customise the system without implying that every deviation is an error.
 
 ---
 
-11. Archetype Selection
+## 17. Archetype Drift
+
+TokenForge should distinguish between ordinary user customisation and structural changes that substantially alter the original archetype.
+
+Normal customisation may include:
+
+- Changing colours
+- Changing values
+- Adjusting scales
+- Changing supported naming conventions
+- Changing references
+- Modifying semantic assignments
+
+These should not automatically remove the archetype association.
+
+A future auditing system may identify significant divergence from an archetype, but V1 does not need to score or police archetype fidelity.
+
+The user's goal is to create a useful system, not to remain perfectly faithful to a reference system.
+
+---
+
+## 18. User Ownership and Customisation
+
+Users are expected to modify the generated system.
+
+The archetype establishes the initial structure.
+
+The user determines the final system.
+
+    Archetype
+         ↓
+    Recommendation
+         ↓
+    User decisions
+         ↓
+    Final system
+
+Depending on the category and architecture, users may be able to modify:
+
+- Token values
+- References
+- Naming conventions
+- Scales
+- Semantic assignments
+- Supported groups
+- Other supported properties
+
+TokenForge should protect structural relationships where changing them would create an invalid or contradictory system.
+
+---
+
+## 19. Archetype Selection
 
 An archetype should be selected when creating a project.
 
@@ -314,11 +580,11 @@ The selection experience should communicate:
 - Appropriate use cases where useful
 - Version
 
-The user should be able to understand the consequences of their selection without needing to understand the underlying token architecture.
+The user should understand the consequences of the selection without needing to understand the underlying token architecture.
 
 ---
 
-12. Archetype Switching
+## 20. Archetype Switching
 
 V1 does not support switching an existing project from one archetype to another.
 
@@ -328,15 +594,15 @@ This prevents potentially destructive changes to an already customised system.
 
 For example:
 
-Project
-    ↓
-Material Inspired v1.0
-    ↓
-User customisation
+    Project
+         ↓
+    Material Inspired v1.0
+         ↓
+    User customisation
 
 The project does not automatically become:
 
-Apple Inspired
+    Apple Inspired
 
 or another archetype.
 
@@ -344,34 +610,36 @@ Future versions may introduce explicit archetype migration, but this should be t
 
 ---
 
-13. Archetype Versioning
+## 21. Archetype Versioning
 
 Archetypes are independently versioned.
 
-Example:
+For example:
 
-Material Inspired v1.0
-Material Inspired v2.0
+    Material Inspired v1.0
+    Material Inspired v2.0
 
-A project records the archetype version from which its system was generated.
+A project records the archetype version from which its initial system was generated.
 
 This ensures reproducibility.
 
 If TokenForge releases a new version of an archetype, existing projects should not silently change.
 
-Existing Project
-    ↓
-Material Inspired v1.0
-    ↓
-Remains unchanged
+For example:
+
+    Existing Project
+         ↓
+    Material Inspired v1.0
+         ↓
+    Remains unchanged
 
 A new project may instead select:
 
-Material Inspired v2.0
+    Material Inspired v2.0
 
 ---
 
-13.1 Why Versioning Matters
+## 22. Why Versioning Matters
 
 An archetype update could potentially change:
 
@@ -388,20 +656,20 @@ Automatically applying these changes to existing projects could alter a user's e
 
 Therefore:
 
-«Archetype updates must not silently modify existing projects.»
+> **Archetype updates must not silently modify existing projects.**
 
 Future migration functionality may allow users to deliberately move between versions.
 
 ---
 
-14. Established-System Archetype Principles
+## 23. Established-System Archetype Principles
 
 Established-system archetypes should prioritise the underlying principles of the reference system rather than superficial visual copying.
 
 For example, a Material Inspired archetype may reflect relevant Material principles around:
 
 - Semantic colour roles
-- Tonal relationships
+- Tonal colour relationships
 - Component states
 - Interaction patterns
 - Design-token organisation
@@ -410,12 +678,14 @@ while still generating values and structures appropriate to the user's project.
 
 The same principle applies to Apple Inspired and Fluent Inspired.
 
+The purpose is to provide a useful design-system starting point, not to recreate an external product.
+
 ---
 
-15. Material Inspired
+## 24. Material Inspired
 
-Category: Established-system
-Reference: Google Material Design / Material 3
+**Category:** Established-system  
+**Reference:** Google Material Design / Material 3
 
 The Material Inspired archetype should use publicly documented Material principles as its primary reference.
 
@@ -432,10 +702,10 @@ The resulting system should remain customisable and should not imply that it is 
 
 ---
 
-16. Apple Inspired
+## 25. Apple Inspired
 
-Category: Established-system
-Reference: Apple Human Interface Guidelines
+**Category:** Established-system  
+**Reference:** Apple Human Interface Guidelines
 
 The Apple Inspired archetype should use Apple's publicly available Human Interface Guidelines as its primary design reference.
 
@@ -454,10 +724,10 @@ The archetype should translate relevant principles into TokenForge's token archi
 
 ---
 
-17. Fluent Inspired
+## 26. Fluent Inspired
 
-Category: Established-system
-Reference: Microsoft Fluent
+**Category:** Established-system  
+**Reference:** Microsoft Fluent
 
 The Fluent Inspired archetype should use Microsoft's publicly available Fluent design guidance as its primary reference.
 
@@ -471,13 +741,13 @@ It should provide a starting architecture informed by relevant Fluent principles
 - Interaction states
 - Component behaviour
 
-As with the other established-system archetypes, the resulting system remains a TokenForge-generated user-owned system.
+As with the other established-system archetypes, the resulting system remains a TokenForge-generated, user-owned system.
 
 ---
 
-18. Minimal
+## 27. Minimal
 
-Category: TokenForge-native
+**Category:** TokenForge-native
 
 Minimal is a TokenForge-native archetype focused on restrained visual systems and clear hierarchy.
 
@@ -497,9 +767,9 @@ It should provide a coherent system in which fewer visual decisions produce a de
 
 ---
 
-19. Editorial
+## 28. Editorial
 
-Category: TokenForge-native
+**Category:** TokenForge-native
 
 Editorial is a TokenForge-native archetype focused on typography, hierarchy and content presentation.
 
@@ -516,29 +786,29 @@ Editorial should provide a foundation suitable for interfaces where typography a
 
 ---
 
-20. Archetype and Components
+## 29. Archetype and Components
 
 Archetypes may influence the components and states used to demonstrate the resulting token system.
 
 For example:
 
-Archetype
-    ↓
-Recommended semantic roles
-    ↓
-Component requirements
-    ↓
-Component preview
+    Archetype
+         ↓
+    Recommended semantic roles
+         ↓
+    Component requirements
+         ↓
+    Component preview
 
-However, the component system remains separate from the token model.
+However, the component system remains separate from the archetype.
 
-Components consume the resulting token system according to the principles established in "TOKEN-MODEL.md".
+Components consume the resulting token system according to the principles established in `TOKEN-MODEL.md`.
 
-The Components system is defined separately in "COMPONENTS.md".
+The V1 component catalogue and behaviour are defined in `COMPONENTS.md`.
 
 ---
 
-21. Archetype and Validation
+## 30. Archetype and Validation
 
 Archetypes may establish recommended validation expectations.
 
@@ -550,37 +820,41 @@ For example, an archetype may define:
 - Accessibility expectations
 - Other structural requirements
 
-However, validation itself belongs to the validation system defined in "VALIDATION.md".
+However, validation itself belongs to the Validation system defined in `VALIDATION.md`.
 
 The archetype provides context.
 
-The validation engine performs the evaluation.
+The Validation system performs the evaluation.
+
+This prevents archetypes from becoming independent validation engines.
 
 ---
 
-22. Archetype and Export
+## 31. Archetype and Export
 
-The selected archetype should not determine the export format.
+The selected archetype does not determine the export format.
 
-Export should represent the final user-approved token system.
+Export represents the final user-approved token system.
 
-Archetype
-    ↓
-Generated system
-    ↓
-User customisation
-    ↓
-Validated system
-    ↓
-Export
+The relationship is:
+
+    Archetype
+         ↓
+    Generated system
+         ↓
+    User customisation
+         ↓
+    Validation
+         ↓
+    Export
 
 The exported result should therefore represent what the user actually created rather than simply exporting the original archetype configuration.
 
-Export behaviour is defined in "EXPORT-SYSTEM.md".
+Export behaviour is defined in `EXPORT-SYSTEM.md`.
 
 ---
 
-23. Adding New Archetypes
+## 32. Adding New Archetypes
 
 TokenForge should support adding new archetypes without changing the fundamental Token Model.
 
@@ -599,54 +873,57 @@ A new archetype should provide:
 - Validation expectations
 - Attribution requirements where applicable
 
-New archetypes should be evaluated against the authoritative sources recorded in "SOURCES.md".
+New established-system archetypes should be evaluated against authoritative sources recorded in `SOURCES.md`.
+
+New TokenForge-native archetypes should have a clearly documented design philosophy and rationale.
 
 ---
 
-24. Archetype Quality Requirements
+## 33. Archetype Quality Requirements
 
 Before an archetype becomes available to users, it should be evaluated for:
 
-Coherence
+### Coherence
 
 The generated token system should form a consistent design language.
 
-Usability
+### Usability
 
 The resulting system should support realistic interface construction.
 
-Accessibility
+### Accessibility
 
 Relevant colour and interaction relationships should satisfy applicable accessibility requirements.
 
-Customisability
+### Customisability
 
 Users should be able to adapt the generated system without immediately breaking its architecture.
 
-Reproducibility
+### Reproducibility
 
 The same archetype version and equivalent inputs should produce predictable results.
 
-Interoperability
+### Interoperability
 
 The resulting token system should remain compatible with TokenForge's export architecture.
 
-Documentation
+### Documentation
 
 The principles and sources behind an archetype should be documented.
 
 ---
 
-25. V1 Archetype Set
+## 34. V1 Archetype Set
 
-TokenForge V1 will provide five archetypes.
+TokenForge V1 provides five archetypes.
 
-Archetype| Category| Primary Reference
-Material Inspired| Established-system| Google Material Design / Material 3
-Apple Inspired| Established-system| Apple Human Interface Guidelines
-Fluent Inspired| Established-system| Microsoft Fluent
-Minimal| TokenForge-native| TokenForge design philosophy
-Editorial| TokenForge-native| TokenForge design philosophy
+| Archetype | Category | Primary Reference |
+|---|---|---|
+| Material Inspired | Established-system | Google Material Design / Material 3 |
+| Apple Inspired | Established-system | Apple Human Interface Guidelines |
+| Fluent Inspired | Established-system | Microsoft Fluent |
+| Minimal | TokenForge-native | TokenForge design philosophy |
+| Editorial | TokenForge-native | TokenForge design philosophy |
 
 This set provides a balance between recognised design-system approaches and TokenForge's own design philosophies.
 
@@ -656,51 +933,58 @@ Additional archetypes should be introduced based on product requirements rather 
 
 ---
 
-26. Relationship to Other Documents
+## 35. Relationship to Other Documents
 
-Concern| Primary Document
-Product purpose and scope| "PRODUCT.md"
-Authoritative references| "SOURCES.md"
-Underlying token structure| "TOKEN-MODEL.md"
-Archetype definitions| "ARCHETYPES.md"
-Colour generation| "COLOUR-ENGINE.md"
-Validation| "VALIDATION.md"
-Components| "COMPONENTS.md"
-Export| "EXPORT-SYSTEM.md"
-Application architecture| "ARCHITECTURE.md"
-AI functionality| "AI-SYSTEM.md"
-Product development sequence| "ROADMAP.md"
+| Concern | Primary Document |
+|---|---|
+| Product purpose and scope | `PRODUCT.md` |
+| Authoritative references | `SOURCES.md` |
+| Underlying token structure | `TOKEN-MODEL.md` |
+| Archetype definitions | `ARCHETYPES.md` |
+| Colour generation | `COLOUR-ENGINE.md` |
+| Validation | `VALIDATION.md` |
+| Components | `COMPONENTS.md` |
+| Export | `EXPORT-SYSTEM.md` |
+| Application architecture | `ARCHITECTURE.md` |
+| AI functionality and boundaries | `AI-SYSTEM.md` |
+| Product development sequence | `ROADMAP.md` |
+
+This separation prevents archetypes from becoming a second product specification or an alternative token engine.
 
 ---
 
-27. Summary
+## 36. Summary
 
-Archetypes are the mechanism through which TokenForge turns a general token model into a useful project-specific starting point.
+Archetypes are the mechanism through which TokenForge turns its common Token Model into useful project-specific starting points.
 
-The system is intentionally layered:
+The architecture is:
 
-Authoritative Sources
-        ↓
-Archetype
-        ↓
-Token Model
-        ↓
-Generated Token System
-        ↓
-User Customisation
-        ↓
-Validation
-        ↓
-Components
-        ↓
-Export
+    Authoritative Sources
+            ↓
+        Archetype
+            ↓
+       Token Model
+            ↓
+    Generated Token System
+            ↓
+      User Refinement
+            ↓
+        Validation
+            ↓
+        Components
+            ↓
+          Export
 
 Established-system archetypes allow TokenForge to build upon recognised public design-system principles.
 
 TokenForge-native archetypes allow the product to develop its own design philosophies.
 
+All archetypes share the same underlying Token Model.
+
+The archetype determines how that model is organised, named and configured.
+
 Neither category dictates the user's final system.
 
-The user's generated and refined token system is the final source of truth.
+The user's generated and refined token system becomes the project's source of truth.
 
-«Choose a proven starting point. Make it yours. Build the system.»
+> **Choose a considered starting point. Make it yours. Build the system.**
