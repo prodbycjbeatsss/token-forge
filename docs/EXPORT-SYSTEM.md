@@ -3,494 +3,652 @@
 **Project:** TokenForge  
 **Document:** Export System  
 **Status:** Active  
-**Version:** 1.0  
-**Last Updated:** 20 August 2026
+**Version:** 1.1  
+**Last Updated:** 21 August 2026  
+**Purpose:** Define how TokenForge converts the approved token system into the four supported V1 export formats and determines whether that system is ready for each selected format.
 
 ---
 
-## Purpose
+## 1. Purpose
 
-The Export System converts a validated TokenForge design-token system into formats that can be used in external design and development environments.
+The Export System converts a validated TokenForge token system into a representation that can be used in an external development environment.
+
 Export is the final stage of the TokenForge workflow:
 
     Create / Edit
-        ↓
-    Validate
-        ↓
-    Select Export
-        ↓
-    Export Readiness Check
-        ↓
+         ↓
+    System Validation
+         ↓
+    Select Export Format
+         ↓
+    Export Readiness Validation
+         ↓
     Export
+         ↓
+    Download
 
-TokenForge maintains one internal token system as the source of truth. Exported files are representations of that system, not separate sources of truth.
+The Export System is responsible for representation and transformation.
+
+It does not define the underlying token model, generate design tokens, or perform general system validation.
 
 ---
 
 ## 2. V1 Export Formats
 
-TokenForge V1 will support four export formats.
+TokenForge V1 supports four export formats:
 
-| Format | Purpose |
-|---|---|
-| DTCG JSON | Standards-based design-token interchange |
-| CSS | Web applications using CSS Custom Properties |
-| Tailwind CSS | Applications using Tailwind CSS |
-| JavaScript / TypeScript | Direct consumption by JavaScript and TypeScript applications |
+1. JSON
+2. CSS
+3. Tailwind CSS
+4. JavaScript / TypeScript
 
-### 2.1 DTCG JSON
+The V1 export system should remain limited to these formats.
 
-DTCG JSON is the standards-oriented export format.
-
-TokenForge should target a clearly defined stable DTCG specification version rather than silently changing its output as the external specification evolves.
-
-DTCG export should preserve token types, values, references and supported metadata where the selected DTCG specification allows them.
-
-### 2.2 CSS
-
-CSS export should produce CSS Custom Properties.
-
-Example:
-
-    :root {
-      --color-action-primary: ...;
-      --color-text-primary: ...;
-      --spacing-md: ...;
-    }
-
-Where possible, semantic tokens should retain their relationships to primitive tokens rather than being unnecessarily flattened.
-
-### 2.3 Tailwind CSS
-
-Tailwind export should target the current CSS-first Tailwind architecture.
-
-The export should produce a usable Tailwind CSS token configuration rather than relying on legacy configuration approaches where the current Tailwind architecture provides a better representation.
-
-### 2.4 JavaScript / TypeScript
-
-JavaScript / TypeScript export should provide the token system as a structured object suitable for direct consumption by application code.
-
-React is not treated as a separate export format.
-
-A JavaScript / TypeScript token export can be consumed by React, React Native and other JavaScript or TypeScript applications without tying TokenForge's export system to a specific UI framework.
+Additional formats may be considered after V1 based on demonstrated user demand and implementation value.
 
 ---
 
-## 3. Export Scope
+## 3. Source of Truth
 
-The user should have two export-scope options.
+The canonical TokenForge token system is the source of truth.
 
-### Complete System
+Export formats are representations of that system.
 
-Exports the complete token system.
+    TokenForge Token Model
+            ↓
+       Export Adapter
+            ↓
+       Target Format
 
-### Custom Selection
+An exported file must not become a second source of truth inside TokenForge.
 
-Allows the user to choose which token categories are included.
+Changes made to an exported file outside TokenForge are therefore not automatically reflected in the TokenForge project.
+
+---
+
+## 4. Complete System Export
+
+The default export is the complete approved token system.
+
+A complete export includes all token categories supported by the selected format and included in the current project.
+
+The user should not need to understand the internal architecture to export the complete system.
+
+The intended flow is:
+
+    Select format
+         ↓
+    Complete System
+         ↓
+    Readiness Check
+         ↓
+    Export
+
+---
+
+## 5. Category Selection
+
+V1 may also allow the user to choose which token categories are included in an export.
+
+The user can therefore choose:
+
+    Complete System
+
+or:
+
+    Selected Categories
 
 For example:
 
-    Colour          ✓
-    Typography      ✓
-    Spacing         ✓
-    Shape           ✓
-    Elevation       ✕
-    Motion          ✕
+    ☑ Colour
+    ☑ Typography
+    ☑ Spacing
+    ☑ Radius
+    ☐ Shadow
+    ☑ Motion
 
-The user should not need to individually select every token when they only want to include or exclude entire categories.
+The selected categories become part of the export input.
 
----
+Category selection must not modify or delete tokens from the project's source system.
 
-## 4. Export Flow
-
-The export experience should follow this structure:
-
-    Export
-      ↓
-    Select format
-      ↓
-    Select scope
-      ↓
-    Export readiness check
-      ↓
-    Ready / Issues
-      ↓
-    Export
-
-Example:
-
-    Format
-    [ CSS ]
-
-    Scope
-    ● Complete system
-    ○ Custom selection
-
-    [ Check Export ]
-
-    Export Readiness
-    ✓ Ready to export
-
-    [ Export CSS ]
+It only determines what is included in that particular export.
 
 ---
 
-## 5. Relationship to Validation
+## 6. Category Dependencies
 
-TokenForge has one primary validation system.
+Token categories may contain relationships with other categories.
 
-General validation determines whether the user's token system is valid independently of any export format.
+For example:
 
-Examples include:
+    Semantic token
+          ↓
+    references primitive token
 
-- Invalid token values
-- Broken references
-- Invalid token structure
-- Naming problems
-- Colour-system problems
-- Accessibility problems
-- Component-related problems
+If a user excludes a category that is required by an included token, Export Readiness Validation must identify the resulting dependency problem.
 
-The main Validation system must not attempt to report export-format problems before the user has selected an export format.
+TokenForge should not silently include excluded categories or silently rewrite references.
+
+The user should instead be shown the relevant readiness problem and given an appropriate way to resolve it.
 
 ---
 
-## 6. Export Readiness
+## 7. Export Workflow
 
-After the user selects an export format and scope, TokenForge performs an export-readiness check.
+The V1 export workflow is:
 
-The readiness check determines whether the current token system can be exported correctly using the selected configuration.
+### Step 1 — System Validation
 
-It should consider:
+The complete token system is validated independently of the export format.
 
+### Step 2 — Format Selection
+
+The user selects one of the four supported export formats.
+
+### Step 3 — Category Selection
+
+The user may export the complete system or select specific token categories.
+
+### Step 4 — Export Readiness Validation
+
+TokenForge checks whether the current system and selected categories can be represented in the selected format.
+
+### Step 5 — Correction
+
+If readiness errors exist, the user can correct them.
+
+### Step 6 — Final Readiness Check
+
+TokenForge confirms that the current export selection is still valid.
+
+### Step 7 — Export
+
+The selected adapter generates the requested files.
+
+---
+
+## 8. Export Readiness
+
+Export readiness is format-specific.
+
+A token system that is valid in TokenForge is not automatically guaranteed to be representable in every target format.
+
+For example:
+
+    System Validation
+         ↓
+        PASS
+
+    CSS selected
+         ↓
+    CSS Readiness
+         ↓
+        PASS
+
+    User changes format
+
+    JavaScript / TypeScript selected
+         ↓
+    JavaScript / TypeScript Readiness
+         ↓
+    New evaluation
+
+The readiness result for one format must never be assumed to apply to another format.
+
+---
+
+## 9. Readiness Invalidation
+
+Export readiness is associated with:
+
+- The current token-system state
 - The selected export format
 - The selected token categories
-- The current token-system state
-- Target-specific compatibility
-- Required token references
-- Target-specific naming requirements
-- Any other requirements necessary to produce a valid export
+- The relevant export configuration
 
-Every V1 export format must have an export-readiness check.
+Changing any of these may invalidate the existing readiness result.
 
-No export format should bypass this process.
+Examples:
+
+- Changing CSS to JSON
+- Changing selected token categories
+- Renaming a token
+- Changing a token type
+- Changing a token reference
+- Changing a token value where the target format has relevant constraints
+
+When a relevant change occurs, TokenForge must re-run the affected readiness checks before export.
 
 ---
 
-## 7. Export Readiness Is Configuration-Specific
+## 10. Final Validation Before Export
 
-An export-readiness result is only valid for the exact export configuration against which it was generated.
+A final readiness check must occur immediately before export.
 
-The relevant configuration includes:
+This protects against exporting a system using stale validation results.
 
-- Current token-system state
-- Export format
-- Export scope
-- Selected token categories
-- Relevant export options
+The final stage is therefore:
+
+    Current Project State
+            ↓
+    Current Export Selection
+            ↓
+    Final Readiness Check
+            ↓
+       ┌────┴────┐
+      PASS      FAIL
+       ↓          ↓
+    Export     Return to correction
+
+The exporter should also perform defensive validation before writing output.
+
+---
+
+## 11. Export Adapters
+
+Each export format is implemented through an export adapter.
+
+The adapter converts the canonical TokenForge representation into the target representation.
+
+    Internal Token Model
+            ↓
+       Export Adapter
+       ↙     ↓      ↘
+     CSS    JSON    Tailwind
+            ...
+       JavaScript / TypeScript
+
+Each adapter is responsible for the syntax and representation rules of its target format.
+
+The adapter must not redefine the TokenForge token model.
+
+---
+
+## 12. Adapter Responsibilities
+
+An export adapter is responsible for:
+
+- Reading the canonical token representation
+- Applying the selected category filter
+- Resolving the target representation
+- Converting token types where appropriate
+- Converting references into target syntax
+- Producing valid target-format output
+- Reporting target-format incompatibilities
+- Preserving token relationships where the target format supports them
+
+An adapter is not responsible for:
+
+- Generating the token system
+- Choosing an archetype
+- Deciding whether a design system is visually good
+- Performing general accessibility validation
+- Silently changing the source token system
+
+---
+
+## 13. JSON Export
+
+JSON is the most direct machine-readable representation of the token system.
+
+The JSON exporter should preserve as much of the canonical token structure as the selected JSON representation allows.
+
+Where DTCG-compatible output is provided, it should follow the applicable Design Tokens Community Group specification.
+
+TokenForge should not claim that every JSON export is automatically DTCG-compliant unless it has passed the relevant DTCG readiness checks.
+
+The internal TokenForge model remains the source of truth.
+
+---
+
+## 14. DTCG Compatibility
+
+The Design Tokens Community Group specification provides a standard format for exchanging design tokens.
+
+TokenForge should use the applicable DTCG specification when defining DTCG-compatible JSON output.
+
+DTCG-compatible export should be treated as an output representation rather than the complete definition of TokenForge's internal model.
+
+The internal model may contain application-specific metadata that is not required by the target representation.
+
+Where a DTCG export cannot represent part of the current system, Export Readiness Validation should identify the incompatibility before export.
+
+---
+
+## 15. CSS Export
+
+CSS export should represent tokens using CSS custom properties.
+
+A conceptual result is:
+
+    :root {
+      --color-primary: ...;
+      --spacing-md: ...;
+      --radius-md: ...;
+    }
+
+The exact generated naming follows the TokenForge naming architecture and the CSS adapter's conversion rules.
+
+References should be represented using valid CSS custom-property references where supported.
+
+The CSS exporter should produce output that can be directly incorporated into a web project's stylesheet or token layer.
+
+---
+
+## 16. Tailwind CSS Export
+
+Tailwind CSS export should translate the TokenForge token system into the configuration or token representation appropriate to the supported Tailwind version.
+
+The adapter must be version-specific where Tailwind's configuration model requires it.
+
+TokenForge should not assume that a configuration valid for one Tailwind major version is automatically valid for another.
+
+The supported V1 Tailwind target should therefore be explicitly defined during implementation.
+
+The export adapter should preserve the relationship between TokenForge tokens and Tailwind theme values where the target representation permits it.
+
+---
+
+## 17. JavaScript / TypeScript Export
+
+JavaScript / TypeScript export provides a programmatic representation of the token system for application code.
+
+A conceptual result is:
+
+    export const tokens = {
+      color: {
+        primary: "...",
+      },
+    };
+
+The exact output structure should be deterministic and documented.
+
+TypeScript is a valid V1 export target because design tokens are frequently consumed directly by application code, build tooling and component systems.
+
+Where TypeScript is selected, the generated output should use valid TypeScript syntax.
+
+The export should not require the consuming project to adopt a TokenForge-specific runtime.
+
+---
+
+## 18. Naming During Export
+
+Token names originate from the approved TokenForge token system.
+
+Export adapters transform names only when required by the target format.
 
 For example:
 
-    CSS
-    Complete System
-        ↓
-    Ready ✓
+    TokenForge
+    spacing.md
 
-does not mean:
+may need to become an appropriate target representation for CSS or another format.
 
-    JavaScript / TypeScript
-    Complete System
-        ↓
-    Ready ✓
+An adapter must not silently rename the source token.
 
-The JavaScript / TypeScript export must be checked independently.
+If a target format imposes a restriction that cannot be safely transformed, Export Readiness Validation should report the issue.
 
 ---
 
-## 8. Readiness Invalidation
+## 19. Target-Specific Naming Restrictions
 
-TokenForge must invalidate an existing export-readiness result when a relevant part of the configuration changes.
+Target-specific naming restrictions belong primarily to Export Readiness Validation and the relevant adapter.
 
-### Changing the export format
+This is important because a naming rule required by one format does not necessarily need to become a global TokenForge restriction.
 
-Example:
+The process is:
 
-    CSS
-      ↓
-    JavaScript / TypeScript
+    TokenForge name
+          ↓
+    Target compatibility check
+          ↓
+    Valid transformation?
+       ↙       ↘
+     Yes        No
+      ↓          ↓
+    Export     Error
 
-The previous CSS readiness result becomes invalid.
+Where a deterministic transformation is safe and predictable, the adapter may perform it.
 
-A new readiness check must run for JavaScript / TypeScript.
-
-### Changing the export scope
-
-Example:
-
-    Complete System
-      ↓
-    Custom Selection
-
-The readiness result must be recalculated.
-
-### Changing selected categories
-
-Example:
-
-    Colour ✓
-    Typography ✓
-    Spacing ✓
-
-becomes:
-
-    Colour ✓
-    Typography ✕
-    Spacing ✓
-
-The readiness result must be recalculated.
-
-### Changing the token system
-
-If the user modifies a token after an export-readiness check, the previous readiness result must no longer be treated as current.
-
-A new check must be performed before export.
+Where no safe transformation exists, the export should be blocked.
 
 ---
 
-## 9. Export Readiness Results
+## 20. References
 
-The user should receive a clear result.
-
-### Ready
-
-The selected system can be exported using the selected format and scope.
-
-Example:
-
-    ✓ Ready to export
-
-### Issues
-
-The selected configuration contains export-specific problems.
-
-Example:
-
-    2 export issues
-
-The user should be able to view the relevant issues and return to the appropriate editing or validation flow.
-
----
-
-## 10. Export Errors
-
-Export-specific errors should only be raised when they are relevant to the selected export configuration.
-
-For example, if a particular token cannot be represented correctly in Tailwind CSS, that problem should be identified when Tailwind CSS is selected.
-
-It should not appear as a general system validation error when the user has not selected Tailwind.
-
-The purpose is to avoid presenting users with problems that do not affect their current task.
-
----
-
-## 11. Token References
-
-TokenForge should preserve token references where the selected export format supports them.
+Token references must remain meaningful after export.
 
 For example:
 
-    semantic.action.primary
-        ↓
-    primitive.color.blue.600
+    semantic.color.primary
+            ↓
+    primitive.color.blue.500
 
-should remain a relationship where the target format can represent it.
+should remain a valid relationship in the target representation where the target format supports references.
 
-If the target format requires the reference to be resolved, the export system should resolve it safely.
+If the target format does not support the same reference mechanism, the adapter must use an appropriate deterministic representation or report an incompatibility.
 
-An export must never contain a broken reference.
+References must never be silently broken.
 
 ---
 
-## 12. Token Selection and Dependencies
+## 21. Composite Tokens
 
-When the user selects specific token categories, TokenForge must account for dependencies between tokens.
+Composite tokens require target-specific handling.
+
+Where a target format supports the relevant structure, the adapter should preserve it.
+
+Where a target format requires the composite value to be represented differently, the adapter may transform it according to documented rules.
+
+If the transformation would lose meaningful information, Export Readiness Validation should report the limitation rather than silently discarding data.
+
+The canonical composite token remains unchanged.
+
+---
+
+## 22. Unsupported Token Types
+
+If the selected export format cannot represent a token type or structure, the exporter must not silently discard it.
+
+The process is:
+
+    Unsupported representation
+            ↓
+    Export Readiness Error
+            ↓
+    User chooses how to resolve it
+
+Possible resolutions may include:
+
+- Include a different representation
+- Exclude the affected category
+- Modify the token system
+- Choose another export format
+
+The source token system remains unchanged until the user explicitly modifies it.
+
+---
+
+## 23. Export Errors
+
+Export errors should be actionable.
+
+An error should identify:
+
+- The affected token or category
+- The selected export format
+- Why the representation is unsupported or invalid
+- Whether automatic remediation is available
+- What the user can do to resolve it
+
+Export should not fail with an opaque technical message when the problem can be explained in user-facing terms.
+
+---
+
+## 24. Export Output
+
+The export system should generate the files required for the selected format.
+
+The output should be:
+
+- Deterministic
+- Valid for the selected target
+- Consistent with the current token system
+- Consistent with the selected categories
+- Free from unresolved export errors
+
+The same source system and export configuration should produce equivalent output.
+
+---
+
+## 25. No Source Mutation
+
+Export must never modify the project's canonical token system.
+
+For example, if CSS requires a different representation of a token name:
+
+    TokenForge token
+          ↓
+    CSS transformation
+          ↓
+    CSS output
+
+The source token remains unchanged.
+
+This ensures that exporting one format does not alter the result of a later export to another format.
+
+---
+
+## 26. Multiple Export Formats
+
+A user may export the same system in multiple formats.
 
 For example:
 
-    semantic.action.primary
-        ↓
-    primitive.color.blue.600
+    TokenForge System
+        ├── JSON
+        ├── CSS
+        ├── Tailwind CSS
+        └── JavaScript / TypeScript
 
-If the user includes the semantic token but excludes the primitive token it depends upon, TokenForge must ensure the resulting export remains valid.
+Each format is evaluated independently.
 
-The system may include required dependencies automatically where appropriate.
-
-It must not create an intentionally broken export.
-
----
-
-## 13. Naming
-
-Users may modify token names after selecting an archetype.
-
-Token names are therefore not permanently locked to the archetype.
-
-However, TokenForge controls the naming rules to maintain consistency and prevent invalid token structures.
-
-Naming rules should ensure:
-
-- Consistent hierarchy
-- Valid characters
-- No duplicate token paths
-- No ambiguous structures
-- Valid export transformations
-- Predictable generated names
-
-The exact naming rules are defined by the Token Model and validation systems.
+A successful CSS export does not imply that JSON, Tailwind CSS or JavaScript / TypeScript is ready.
 
 ---
 
-## 14. Export Naming
+## 27. Export and Validation Relationship
 
-Each export format may require a different representation of the same TokenForge token name.
+The Validation system owns evaluation.
 
-For example:
+The Export System owns representation.
 
-    color.action.primary
+    Validation
+         ↓
+    Is the system valid?
+         ↓
+    Export System
+         ↓
+    Can the selected representation be produced?
 
-may become:
+Export adapters may perform defensive technical checks, but the main readiness evaluation should remain part of the Validation architecture.
 
-    --color-action-primary
-
-when exported to CSS.
-
-Naming transformations must be deterministic.
-
-The same TokenForge project should produce predictable names when exported repeatedly using the same configuration.
-
----
-
-## 15. Export Integrity
-
-Before an export is generated, TokenForge must confirm that the selected configuration is ready.
-
-The export process must not silently:
-
-- Drop required tokens
-- Break references
-- Overwrite conflicting names
-- Remove essential information
-- Produce invalid target syntax
-
-If the selected format cannot represent something required for a valid export, the user must be informed before the export is generated.
+This prevents validation logic from becoming duplicated across four exporters.
 
 ---
 
-## 16. Export Preview
+## 28. V1 Export Requirements
 
-The Export interface should provide a concise preview before downloading.
+TokenForge V1 must support:
 
-The preview should communicate:
-
-- Selected format
-- Selected scope
-- Number or categories of tokens being exported
-- Export-readiness status
-- Relevant issues, if any
-- The files that will be generated
-
-The preview does not need to reproduce the entire generated file.
-
-A representative preview is sufficient for V1.
-
----
-
-## 17. Export Output
-
-Depending on the selected format, TokenForge may generate one or more files.
-
-The user should receive the resulting files in a convenient downloadable form.
-
-The output should have predictable filenames and valid syntax for the selected format.
+- JSON export
+- CSS export
+- Tailwind CSS export
+- JavaScript / TypeScript export
+- Complete system export
+- Token-category selection
+- Format-specific readiness validation
+- Readiness invalidation after relevant changes
+- Final readiness check before export
+- Export adapters
+- Deterministic output
+- Reference preservation where supported
+- Clear unsupported-format errors
+- No silent source-system mutation
 
 ---
 
-## 18. Export and Components
+## 29. V1 Non-Goals
 
-Components are consumers of the token system.
-
-V1 does not require TokenForge to generate complete component implementations as part of token export.
-
-For example, exporting CSS does not automatically generate:
-
-- React components
-- Vue components
-- React Native components
-- Android components
-- Web component libraries
-
-The exported token system is intended to provide the design-system foundation that developers can use when implementing components.
-
----
-
-## 19. V1 Exclusions
-
-The following are outside the V1 Export System:
+The V1 Export System does not need to provide:
 
 - Android XML
-- Swift / SwiftUI
-- Jetpack Compose
-- Flutter
-- Automatic component-code generation
-- Complete application scaffolding
-- Automatic GitHub publishing
-- Automatic package publishing
-- Automatic dependency installation
-- Automatic modification of an existing application
-- Framework-specific React component generation
+- Swift asset/catalogue generation
+- Kotlin generation
+- Figma file generation
+- Design-tool plugin exports
+- Framework-specific component generation
+- Automatic repository integration
+- Git commits
+- Package publishing
+- Cloud synchronisation
+- Continuous export pipelines
 
-These may be considered as future capabilities if there is a demonstrated need.
-
----
-
-## 20. V1 Principles
-
-The Export System follows these principles:
-
-1. The TokenForge token system remains the source of truth.
-2. Export formats are representations of that system.
-3. V1 supports DTCG JSON, CSS, Tailwind CSS and JavaScript / TypeScript.
-4. Users can export the complete system or select token categories.
-5. General validation remains format-agnostic.
-6. Every export format receives an export-readiness check.
-7. Readiness is tied to the current token state and export configuration.
-8. Changing the format, scope, selected categories or relevant token data invalidates the previous readiness result.
-9. Token references should be preserved where the target supports them.
-10. TokenForge must never silently produce a broken or misleading export.
-11. Export should remain simple for V1 rather than exposing unnecessary technical configuration.
+These can be considered after V1 if there is demonstrated value.
 
 ---
 
-## 21. Relationship to Other Systems
+## 30. Relationship to Other Documents
 
-The Export System depends on the rest of the TokenForge architecture:
+| Concern | Primary Document |
+|---|---|
+| Product scope | `PRODUCT.md` |
+| Token structure | `TOKEN-MODEL.md` |
+| Archetypes | `ARCHETYPES.md` |
+| Colour generation | `COLOUR-ENGINE.md` |
+| Validation and readiness | `VALIDATION.md` |
+| Components | `COMPONENTS.md` |
+| Export behaviour | `EXPORT-SYSTEM.md` |
+| Application architecture | `ARCHITECTURE.md` |
+| Overall specification | `MASTER-SPECIFICATION.md` |
 
-    Archetypes
-        ↓
-    Token Model
-        ↓
-    Colour / Foundation Systems
-        ↓
-    User Editing
-        ↓
-    Validation
-        ↓
-    Export Readiness
-        ↓
-    Export
+This document defines export behaviour without redefining the underlying token model or validation architecture.
 
-The Export System should consume the validated token model rather than defining its own token architecture.
+---
 
-Validation remains responsible for determining whether the system and selected export configuration are valid.
+## 31. Summary
 
-Export remains responsible for transforming the approved system into the selected output format.
+TokenForge V1 exports a validated token system into four practical development formats:
+
+    JSON
+    CSS
+    Tailwind CSS
+    JavaScript / TypeScript
+
+The system is validated before export format selection.
+
+After the user selects a format and optional token categories, TokenForge performs a format-specific readiness check.
+
+Changing the format, selected categories or relevant token-system data invalidates the previous readiness state.
+
+A final readiness check occurs immediately before export.
+
+The architecture is:
+
+    Canonical Token System
+            ↓
+    System Validation
+            ↓
+    Export Selection
+            ↓
+    Category Selection
+            ↓
+    Format Readiness Validation
+            ↓
+    Export Adapter
+            ↓
+    Target Format
+
+The core principle is:
+
+> **One canonical system. Multiple validated representations.**
