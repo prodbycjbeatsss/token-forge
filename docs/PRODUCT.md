@@ -1,527 +1,345 @@
-TokenForge — Product Specification
+# TokenForge — Product Specification
 
-Project: TokenForge
-Document: Product Specification
-Status: Active
-Version: 1.0
-Platform: Web / Mobile-first
-Product Type: Design-token authoring, validation and export tool
-
----
-
-1. Product Overview
-
-TokenForge is a design-system tool that helps designers and developers create, refine, validate and export production-ready design tokens.
-
-The product sits between visual design and implementation. Instead of forcing users to define a complete design system manually, TokenForge provides a structured environment where users can establish their visual foundations, generate a token architecture, test those decisions against real UI components, identify problems and export the resulting system for use in a real project.
-
-Core principle
-
-«Design the system before you build the interface.»
-
-TokenForge should make design-token work understandable to beginners while remaining technically rigorous enough to produce useful output for experienced designers and developers.
+**Project:** TokenForge  
+**Document:** Product Specification  
+**Status:** Active  
+**Version:** 1.1  
+**Last Updated:** 21 August 2026  
+**Purpose:** Define the product purpose, V1 scope, core workflow, capabilities and boundaries of TokenForge.
 
 ---
 
-2. Product Goal
+## 1. Product Overview
 
-The primary goal of TokenForge is to make it significantly easier to go from:
+TokenForge is a design-system tool for creating, refining, validating and exporting production-ready design tokens.
 
-Brand → Foundations → Tokens → Components → Validation → Export
+It sits between visual design and implementation.
 
-without requiring users to manually construct and maintain the underlying token architecture from scratch.
+Instead of requiring users to manually construct a complete design-token system, TokenForge provides a structured workflow for establishing visual foundations, generating a token architecture, refining the resulting system, testing it against realistic components, validating the result and exporting it for use in a real project.
 
-TokenForge should help users answer:
+Core principle:
 
-- What colours should my system use?
-- How should those colours be structured?
-- Which values are primitives and which are semantic roles?
-- Does my colour system work across real UI states?
-- Are my contrast relationships valid?
-- Does my system behave consistently across components?
-- Is my token architecture organised correctly?
-- Can I export the system into a format that can actually be used?
+> **Design the system before you build the interface.**
 
 ---
 
-3. Target Users
+## 2. Product Goal
 
-Primary Users
+TokenForge exists to make the creation of a coherent design-token system accessible without requiring the user to manually understand every aspect of token architecture, colour systems and implementation formats.
 
-Beginners
+The product should help users move from:
 
-People who understand basic design or development concepts but have little or no experience creating formal design systems.
+    Brand / Design Intent
+            ↓
+    Token System
+            ↓
+    Tested System
+            ↓
+    Validated System
+            ↓
+    Production Export
 
-TokenForge should remove unnecessary technical complexity without hiding important concepts.
-
-Designers
-
-UI/UX designers who want to create a structured colour and token system before designing or handing work over to developers.
-
-Developers
-
-Developers who need a consistent token system they can import into a project rather than manually translating a visual design into code.
-
-Design-system practitioners
-
-More experienced users who want a faster environment for creating, auditing and testing token systems.
+The result should be a usable design-token system rather than a visual prototype or collection of disconnected values.
 
 ---
 
-4. Product Positioning
+## 3. V1 Definition
 
-TokenForge is not intended to be:
+TokenForge V1 is complete when a user can create a coherent design-token system, refine it, test it against the V1 component set, validate it and export it into practical development formats.
 
-- A general-purpose design tool
-- A Figma replacement
-- A complete website builder
-- A component-code generator
-- A project management system
-- A generic colour-picker
-- A token marketplace
+V1 therefore focuses on the core design-token workflow.
 
-It is a design-token laboratory and design-system foundation tool.
-
-Its value comes from connecting token architecture with visual validation.
+V1 does not attempt to become a complete design collaboration platform, design tool or component-library marketplace.
 
 ---
 
-5. Core Product Workflow
+## 4. Core V1 Workflow
 
-The primary TokenForge workflow is:
+The primary workflow is linear:
 
-1. Define
+    Create
       ↓
-2. Generate
+    Generate
       ↓
-3. Refine
+    Edit
       ↓
-4. Validate
+    Components
       ↓
-5. Preview
+    Validate
       ↓
-6. Export
+    Export
+      ↓
+    Download
 
-Define
+Validation occurs before export format selection.
 
-The user establishes their visual foundations, particularly their brand colours and core design preferences.
+After the user selects an export format, TokenForge performs a format-specific export-readiness check before allowing the export to proceed.
 
-Generate
+The workflow therefore becomes:
 
-TokenForge generates an initial token structure from those foundations.
-
-Refine
-
-The user can inspect and modify generated values rather than being locked into automatic decisions.
-
-Validate
-
-TokenForge evaluates the system for technical and design-system problems such as contrast failures, invalid relationships and inconsistent usage.
-
-Preview
-
-The system is demonstrated through realistic UI components rather than only displaying raw token values.
-
-Export
-
-The completed system can be exported for use in an external project.
+    Validate System
+          ↓
+    Select Export
+          ↓
+    Select Format
+          ↓
+    Export Readiness Check
+          ↓
+    Export
 
 ---
 
-6. Core Product Areas
+## 5. V1 Capabilities
 
-6.1 Foundations
+TokenForge V1 provides the following core capabilities.
 
-The foundations area establishes the underlying design language of the system.
+### 5.1 Project Creation
 
-Potential foundations include:
+Users can create a TokenForge project and establish the foundations from which the token system is generated.
 
-- Brand colours
-- Colour scales
-- Neutral colours
-- Typography
-- Spacing
-- Radius
-- Elevation
-- Motion
-- Other foundational values supported by the token architecture
+### 5.2 Brand Colour Input
 
-V1 should prioritise the foundations that are necessary for producing a useful, coherent token system rather than attempting to support every possible design-system primitive.
+Users can provide their brand or foundational colours.
 
----
+These values are processed by the Colour Engine to generate the colour system.
 
-6.2 Token System
+### 5.3 Archetype Selection
 
-TokenForge separates foundational values from semantic roles.
+Users can select an archetype that determines the organisation, scales and semantic vocabulary used to construct the system.
 
-Primitive tokens
+Archetypes use the common Token Model rather than creating independent token architectures.
 
-Primitive tokens represent raw values.
+### 5.4 Token Generation
 
-Examples:
+TokenForge generates the token system from the user's inputs and selected configuration.
 
-blue.500
-grey.100
-spacing.4
-radius.md
+The generated system can then be inspected and modified by the user.
 
-Semantic tokens
+### 5.5 Token Editing
 
-Semantic tokens represent how values are used.
+Users can refine generated token values and supported naming conventions.
 
-Examples:
+Naming customisation is controlled so that users cannot create inconsistent naming conventions within a token category.
 
-color.text.primary
-color.surface.default
-color.action.primary
-color.border.default
+### 5.6 Component Testing
 
-This separation allows the user to change the underlying visual values without having to redesign the architecture of the system.
+The token system can be applied to the V1 component set to demonstrate how the system behaves in realistic interface contexts.
 
----
+Components provide practical usage of the token system rather than functioning as a full component library.
 
-7. Token Generation
+### 5.7 Validation
 
-TokenForge should be capable of generating an initial token system from the user's defined foundations.
+TokenForge evaluates the token system for structural, relational, naming, accessibility and other applicable system rules.
 
-Generation should provide a starting point, not pretend to be an infallible design decision.
+Validation can provide warnings, errors, manual corrections and safe deterministic automatic remediation.
 
-The user must retain control over the generated system.
+### 5.8 Export
 
-Generated tokens should therefore be:
-
-- Inspectable
-- Editable
-- Validatable
-- Reversible where practical
-- Exportable
-
-The system should clearly distinguish between:
-
-Generated recommendation
-and
-User-approved system value
-
----
-
-8. Colour System
-
-Colour is one of TokenForge's primary areas of functionality.
-
-The colour system should allow users to work with:
-
-- Brand colours
-- Primary colour scales
-- Secondary colours
-- Tertiary colours
-- Neutral scales
-- Surface colours
-- Text colours
-- Border colours
-- Interaction states
-- Feedback colours
-
-TokenForge should use colour relationships rather than treating every colour as an isolated value.
-
-The system should also support objective validation where applicable, particularly around accessibility and contrast.
-
----
-
-9. Validation
-
-Validation is a core product capability.
-
-TokenForge should identify problems in the user's system before those problems reach implementation.
-
-Validation may include:
-
-Accessibility
-
-- Text/background contrast
-- UI component contrast
-- State contrast
-- Other relevant WCAG-based checks
-
-Token architecture
-
-- Missing semantic relationships
-- Duplicate values where meaningful
-- Broken references
-- Invalid references
-- Inconsistent naming
-- Structural problems
-
-System consistency
-
-- Inconsistent scales
-- Missing states
-- Unused values
-- Conflicting semantic roles
-- Other detectable system-level inconsistencies
-
-Validation results should be understandable to non-experts.
-
-Where possible, TokenForge should explain:
-
-What is wrong → Why it matters → What could be changed
-
----
-
-10. Components
-
-Components are the primary way TokenForge demonstrates how a token system behaves in practice.
-
-Rather than requiring users to understand a token purely as an abstract value, TokenForge should show those tokens being used within realistic interface components.
-
-Examples may include:
-
-- Buttons
-- Inputs
-- Cards
-- Navigation
-- Tabs
-- Badges
-- Alerts
-- Checkboxes
-- Switches
-- Other common UI patterns
-
-The Components area is therefore primarily a visual validation and demonstration layer.
-
-V1 scope
-
-V1 should not introduce a separate system for manually extracting or purchasing individual component tokens.
-
-If a user exports or downloads their design system and imports it into their own project, the necessary tokens already exist within that system.
-
-The Components area should therefore focus on:
-
-- Showing components
-- Demonstrating token usage
-- Testing states
-- Visualising system behaviour
-- Helping users identify problems
-
-Component-level token extraction can be considered for a future version if real user demand justifies it.
-
----
-
-11. UI Stress Testing
-
-One of TokenForge's differentiating features is the ability to test a token system against realistic interface situations.
-
-A colour may look excellent when viewed alone but fail when used for:
-
-- Disabled text
-- Placeholder text
-- Borders
-- Buttons
-- Hover states
-- Selected states
-- Error states
-- Surfaces
-- Layered interfaces
-
-TokenForge should therefore prioritise contextual testing over isolated token inspection.
-
-The goal is to answer:
-
-«Does this design system actually work when used?»
-
----
-
-12. Export
-
-Once a system has been created and validated, users should be able to export it for use outside TokenForge.
-
-Export should preserve the system's structure rather than simply dumping a list of values.
-
-Potential export formats include:
+Users can export the resulting token system into the four supported V1 formats:
 
 - JSON
-- CSS custom properties
-- Other standards-compatible token formats
+- CSS
+- Tailwind CSS
+- JavaScript / TypeScript
 
-The exact export formats should be determined by the technical implementation and supported standards.
+Users can export the complete system or select token categories to include.
 
-Exported output should be:
-
-- Structured
-- Consistent
-- Machine-readable
-- Developer-friendly
-- Suitable for integration into real projects
+Each selected export format receives its own readiness check.
 
 ---
 
-13. Design-System Architecture
+## 6. V1 Token System
 
-TokenForge should encourage a layered architecture:
+TokenForge V1 provides a structured token system rather than a collection of arbitrary values.
 
-Foundations
-     ↓
-Primitive Tokens
-     ↓
-Semantic Tokens
-     ↓
-Components
-     ↓
-Validation
-     ↓
-Export
+The system uses the common Token Model defined in `TOKEN-MODEL.md`.
 
-This hierarchy is important because it prevents users from building systems where components directly depend on arbitrary raw values.
+Archetypes determine how the available token capabilities are organised and named.
 
-The product should encourage semantic-first usage wherever appropriate.
+Different archetypes may therefore produce different design philosophies while remaining compatible with the same underlying Token Model.
+
+The product does not require every archetype to use identical scales or semantic vocabulary.
 
 ---
 
-14. User Experience Principles
+## 7. V1 Components
 
-Simple on the surface
+TokenForge V1 provides a defined set of 12 reference components.
 
-The interface should remain approachable even when the underlying system is technically sophisticated.
+These components exist to:
 
-Users should not need to understand the entire design-token ecosystem before they can create something useful.
+- Demonstrate token usage
+- Exercise the token system
+- Reveal inconsistencies
+- Provide realistic interface context
+- Support validation
 
-Intelligent underneath
+They are not intended to constitute a complete production component library.
 
-TokenForge should handle complexity behind the interface.
-
-The system should perform calculations, generate relationships, detect problems and maintain structural consistency wherever possible.
-
-Visual before technical
-
-Users should be able to understand the effect of a decision visually before needing to understand the implementation details behind it.
-
-Explain, don't obscure
-
-Automation should never become a black box.
-
-When TokenForge makes a recommendation or reports a problem, the user should be able to understand the reasoning.
-
-Progressive complexity
-
-Basic workflows should remain simple.
-
-Advanced controls can be exposed when users need them rather than forcing every user to interact with the full underlying token architecture.
+Additional components can be introduced after V1 based on demonstrated product value.
 
 ---
 
-15. V1 Scope
+## 8. Validation
 
-V1 should focus on proving the core TokenForge workflow.
+Validation is a core part of the V1 workflow.
 
-V1 includes
+It evaluates the token system independently of a selected export format.
 
-- Project creation
-- Brand/foundation definition
-- Token generation
-- Primitive token editing
-- Semantic token editing
+The general validation stage determines whether the system itself is valid and coherent.
+
+After an export format is selected, a separate readiness evaluation determines whether the current system can be represented safely in that format.
+
+Changing the export format or relevant project data causes the applicable readiness state to be re-evaluated.
+
+---
+
+## 9. Export Formats
+
+V1 supports exactly four export targets:
+
+| Format | Primary Use |
+|---|---|
+| JSON | Machine-readable token data |
+| CSS | Web applications using CSS custom properties |
+| Tailwind CSS | Tailwind-based web applications |
+| JavaScript / TypeScript | Application code and programmatic token consumption |
+
+The export system is intentionally limited to these formats for V1.
+
+Additional platform-specific formats are outside the V1 scope.
+
+---
+
+## 10. AI Positioning
+
+AI is not a foundational dependency of TokenForge V1.
+
+The core product should work through deterministic systems wherever deterministic behaviour is sufficient.
+
+This includes:
+
+- Token generation rules
+- Colour calculations
 - Token relationships
-- Colour validation
-- Accessibility/contrast validation
-- Component previews
-- Component state testing
-- System overview
-- Token-system export
-- Basic project persistence
+- Validation rules
+- Naming rules
+- Export transformations
 
-V1 should prioritise
+AI may be introduced where it provides a demonstrable advantage that cannot be achieved as reliably through deterministic logic.
 
-1. Colour foundations
-2. Primitive tokens
-3. Semantic tokens
-4. Validation
-5. Component previews
-6. Export
-
-These areas represent the core product value.
+AI should therefore be treated as an optional product capability rather than something that must be inserted into the core workflow.
 
 ---
 
-16. V1 Exclusions
+## 11. Product Principles
 
-The following should not become V1 requirements unless a strong product reason emerges:
+### Simple on the surface. Intelligent underneath.
 
-- Full visual design editor
-- Figma replacement functionality
-- Full code generation
-- Component marketplace
-- Individual component-token marketplace
-- Advanced collaboration
-- Team permissions
-- Version-control workflows
-- Complex project management
-- AI-generated complete interfaces
-- Full design-system documentation generation
-- Large third-party integration ecosystem
+The complexity of design-system architecture should be handled by the product rather than unnecessarily exposed to the user.
 
-These may become future opportunities but should not dilute the initial product.
+### System before interface.
 
----
+TokenForge creates the underlying system before focusing on individual interface implementation.
 
-17. Future Expansion
+### User control without architectural chaos.
 
-Potential future capabilities include:
+Users should be able to customise their system while the product protects important structural relationships and naming consistency.
 
-- Figma integration
-- GitHub integration
-- Design-system versioning
-- Team collaboration
-- Design-system documentation
-- Component code generation
-- Framework-specific exports
-- Advanced theme generation
-- Multi-brand systems
-- Dark-mode generation
-- Token migration tools
-- Automated system auditing
-- Component-level token inspection
-- Design-system comparison
-- AI-assisted system refinement
+### Deterministic where possible.
 
-These are future possibilities, not commitments.
+If a result can be generated, validated or transformed reliably through explicit rules, TokenForge should prefer that approach over unnecessary AI dependence.
+
+### Practical output.
+
+The final result must be usable outside TokenForge.
+
+Export is therefore a core product capability rather than an optional convenience.
 
 ---
 
-18. Success Criteria
+## 12. V1 Boundaries
 
-TokenForge V1 should be considered successful if a user can:
+The following are outside the V1 product scope:
 
-1. Start with their brand colours.
-2. Generate a coherent token system.
-3. Understand what TokenForge generated.
-4. Modify the system without breaking its architecture.
-5. Identify accessibility and structural problems.
-6. See how the system behaves in realistic components.
-7. Resolve important problems.
-8. Export the resulting system.
-9. Use that exported system in a real project.
+- Social features
+- User-to-user sharing
+- Community features
+- Public design-system publishing
+- Collaboration workflows
+- Comments
+- Full design-tool functionality
+- Full component-library authoring
+- Component marketplace functionality
+- Android XML export
+- Swift-specific export
+- Figma file generation
+- Repository publishing
+- Package publishing
+- Continuous export pipelines
+- AI-dependent core functionality
 
-The product should make this workflow substantially easier than creating the same system manually.
-
----
-
-19. Product Differentiator
-
-TokenForge's central differentiator is not simply creating design tokens.
-
-The differentiator is the relationship between:
-
-Token architecture + objective validation + real UI usage
-
-A token is only useful if it works within the system it belongs to.
-
-TokenForge therefore treats the design system as something that should be:
-
-Created → Tested → Refined → Proven → Exported
-
-rather than simply generated and downloaded.
+These features may be considered after V1 if there is evidence that they provide meaningful product value.
 
 ---
 
-20. Product North Star
+## 13. What "V1 Complete" Means
 
-«TokenForge helps people build design systems that work before they build products that depend on them.»
+V1 is considered complete when the core workflow works end-to-end:
+
+    User Input
+        ↓
+    Archetype
+        ↓
+    Token Generation
+        ↓
+    Token Editing
+        ↓
+    Component Testing
+        ↓
+    System Validation
+        ↓
+    Export Selection
+        ↓
+    Export Readiness
+        ↓
+    JSON / CSS / Tailwind CSS / JS-TS
+        ↓
+    Usable External Token System
+
+A feature is not required for V1 simply because it could be useful in a mature design-system platform.
+
+The V1 standard is whether the feature is necessary to create, validate and use a functioning TokenForge design-token system.
+
+---
+
+## 14. Relationship to Technical Documents
+
+`PRODUCT.md` defines what TokenForge is intended to provide.
+
+It does not redefine the technical implementation of those capabilities.
+
+The detailed responsibilities are defined by the relevant documents:
+
+| Area | Document |
+|---|---|
+| Token architecture | `TOKEN-MODEL.md` |
+| Design-system archetypes | `ARCHETYPES.md` |
+| Colour generation | `COLOUR-ENGINE.md` |
+| Components | `COMPONENTS.md` |
+| Validation | `VALIDATION.md` |
+| Export | `EXPORT-SYSTEM.md` |
+| Application architecture | `ARCHITECTURE.md` |
+| Overall specification | `MASTER-SPECIFICATION.md` |
+
+Where technical detail conflicts with this document, the documents defining that specific system should provide the detailed implementation rules, while `PRODUCT.md` remains the source for product scope and intent.
+
+---
+
+## 15. V1 Product Principle
+
+TokenForge V1 should not be judged by how many features it contains.
+
+It should be judged by whether it can reliably take a user's design intent and produce a coherent, validated and usable design-token system.
+
+> **Create the system. Test the system. Validate the system. Export the system.**
