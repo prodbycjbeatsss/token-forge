@@ -1,64 +1,71 @@
-TokenForge — Token Model
+# TokenForge — Token Model
 
-Project: TokenForge
-Document: Token Model
-Status: Active
-Version: 1.0
-Purpose: Define the canonical structure and behaviour of tokens within TokenForge.
-
----
-
-1. Purpose
-
-The Token Model defines the underlying structure that TokenForge uses to represent, relate, validate and export design tokens.
-
-It does not define the exact token names, scales or semantic roles that every project must use.
-
-Those decisions are determined by the selected archetype.
-
-The Token Model instead provides the common framework that allows different archetypes to generate different token systems while remaining compatible with the rest of TokenForge.
+**Project:** TokenForge  
+**Document:** Token Model  
+**Status:** Active  
+**Version:** 1.1  
+**Last Updated:** 21 August 2026  
+**Purpose:** Define the canonical token structure, types, relationships, naming architecture, and behaviour used throughout TokenForge.
 
 ---
 
-2. Core Principle
+## 1. Purpose
 
-TokenForge separates the token model from the token system generated for a project.
+The Token Model defines the common underlying language that TokenForge uses to represent, relate, validate and export design tokens.
 
-Token Model
-    ↓
-Archetype
-    ↓
-Generated Token System
-    ↓
-Components
-    ↓
-Validation
-    ↓
-Export
+It establishes what TokenForge can represent without prescribing how every project must organise or name those tokens.
 
-The Token Model defines what TokenForge understands.
+The Token Model is shared across archetypes.
 
-The archetype defines how those capabilities are configured for a particular design-system approach.
+An archetype configures the common model into a particular design-system architecture by defining its token groups, scales, semantic roles, naming conventions and recommended relationships.
 
-The generated token system is the actual collection of tokens belonging to the user's project.
+The core distinction is:
+
+> **The Token Model defines what TokenForge can represent. The archetype defines how a particular project uses that model.**
 
 ---
 
-3. Token Layers
+## 2. Core Architecture
 
-TokenForge supports a layered token architecture.
+TokenForge separates the underlying token model from the generated token system.
 
-Foundations
-     ↓
-Primitive Tokens
-     ↓
-Semantic Tokens
-     ↓
-Component Consumption
+    Token Model
+         ↓
+    Archetype
+         ↓
+    Generated Token System
+         ↓
+    User Refinement
+         ↓
+    Approved Token System
+         ↓
+    Components / Validation / Export
 
-Foundations
+The Token Model is the common foundation.
 
-Foundations are the underlying design inputs from which the system can be generated.
+The archetype provides the initial system architecture.
+
+The generated token system becomes the user's actual project system after refinement and approval.
+
+Components, Validation and Export consume or evaluate that system rather than creating competing sources of truth.
+
+---
+
+## 3. Token Layers
+
+TokenForge uses a layered token architecture:
+
+    Foundations
+         ↓
+    Primitive Tokens
+         ↓
+    Semantic Tokens
+         ↓
+    Component Consumption
+
+### Foundations
+
+Foundations are underlying project inputs used to generate the token system.
 
 Examples include:
 
@@ -71,99 +78,424 @@ Examples include:
 
 Foundations are not necessarily tokens themselves.
 
-They provide the source material from which an archetype can generate the token system.
+They provide source material from which the archetype generates the project's token system.
 
----
+### Primitive Tokens
 
-4. Primitive Tokens
+Primitive tokens represent reusable foundational values without assigning a specific interface role.
 
-Primitive tokens represent foundational values without assigning a specific interface role.
+Examples include:
 
-Examples:
+- A colour value
+- A spacing dimension
+- A font family
+- A font weight
+- A duration
+- A shadow definition
 
-color.blue.500
-color.neutral.100
-spacing.4
-radius.medium
+Primitive tokens provide the underlying values from which semantic tokens can derive their meaning.
 
-Primitive tokens should represent reusable values rather than individual component decisions.
+### Semantic Tokens
 
-A primitive may be referenced by one or more semantic tokens.
+Semantic tokens represent design intent or usage rather than merely representing a raw value.
 
-Example:
+Examples include:
 
-color.blue.600
-        ↓
-#41727C
+- Text colour
+- Surface colour
+- Border colour
+- Primary action colour
+- Content spacing
+- Interactive state values
 
-Primitive token names and structures are determined by the selected archetype.
+A semantic token can reference a primitive token.
 
----
+### Component Consumption
 
-5. Semantic Tokens
-
-Semantic tokens represent design intent or usage rather than simply representing a raw value.
-
-Examples:
-
-color.text.primary
-color.text.secondary
-color.surface.default
-color.border.default
-color.action.primary
-
-A semantic token may reference a primitive token.
-
-For example:
-
-color.action.primary
-        ↓
-color.blue.600
-        ↓
-#41727C
-
-This allows the underlying visual value to change without requiring every consuming interface element to be changed individually.
-
-Semantic roles are determined by the selected archetype.
-
----
-
-6. Component Consumption
-
-Components consume semantic tokens rather than defining their own independent visual system.
+Components consume tokens from the system rather than defining an independent visual system.
 
 The intended relationship is:
 
-Primitive
-    ↓
-Semantic
-    ↓
-Component
+    Primitive
+         ↓
+    Semantic
+         ↓
+    Component
 
-For example:
-
-color.blue.600
-      ↓
-color.action.primary
-      ↓
-Button
-
-Components should therefore act as consumers and demonstrators of the token system.
-
-They should not create a competing token hierarchy.
+Components therefore act as consumers and demonstrations of the token system.
 
 ---
 
-7. Token References
+## 4. Token Types
 
-TokenForge supports relationships between tokens.
+A token has a defined type describing the kind of value it represents.
 
-A token reference allows one token to derive its value from another token rather than duplicating the value.
+TokenForge V1 uses a common token-type model across archetypes.
 
-Example:
+Archetypes do not create separate incompatible token type systems. They configure and organise the supported capabilities according to their design-system architecture.
 
-color.action.primary
-    → color.blue.600
+### V1 Primitive Types
+
+TokenForge V1 supports:
+
+- Color
+- Dimension
+- Number
+- Font Family
+- Font Weight
+- Duration
+- Cubic Bézier
+
+### V1 Composite Types
+
+TokenForge V1 supports:
+
+- Stroke Style
+- Border
+- Shadow
+- Gradient
+- Typography
+
+These types align with the kinds of values required to represent the design systems targeted by TokenForge while remaining compatible with the DTCG interoperability model where practical.
+
+TokenForge should not expose additional token types merely because an external standard supports them. A type must have a clear product requirement before being added to V1.
+
+---
+
+## 5. Dimension as a General Measurement Type
+
+TokenForge uses `Dimension` for values that represent a measurement.
+
+This can include:
+
+- Spacing
+- Size
+- Width
+- Height
+- Radius
+- Border thickness
+- Other dimensional values
+
+TokenForge does not require separate primitive token types for each of these concepts.
+
+Their meaning is established through token category, semantic role or component usage.
+
+For example:
+
+    Spacing
+        ↓
+    Dimension
+
+    Radius
+        ↓
+    Dimension
+
+    Border width
+        ↓
+    Dimension
+
+This avoids unnecessary duplication in the underlying token model.
+
+---
+
+## 6. Shape and Radius
+
+Radius is represented using the `Dimension` type.
+
+For example:
+
+    shape
+        radius
+            small
+            medium
+            large
+
+The archetype determines the available scale, naming convention and recommended usage.
+
+TokenForge does not require a separate `Radius` primitive type.
+
+---
+
+## 7. Elevation and Shadow
+
+TokenForge does not require a separate primitive `Elevation` type.
+
+Visual elevation can be represented through `Shadow` tokens and semantic relationships.
+
+For example:
+
+    Elevation
+         ↓
+    Semantic elevation role
+         ↓
+    Shadow token
+
+This allows different archetypes to express elevation differently while maintaining a consistent underlying representation.
+
+An archetype may choose to expose elevation as a user-facing category even though the underlying token value is represented by a shadow.
+
+---
+
+## 8. Primitive Token Structure
+
+Primitive tokens represent reusable values without assigning interface meaning.
+
+Their exact naming and grouping are determined by the archetype's naming architecture.
+
+The underlying representation should retain structured information such as:
+
+- Stable identity
+- Category
+- Name segments
+- Type
+- Value
+- Description where applicable
+- Group
+- Mode where applicable
+- Source information where applicable
+
+The internal model should not depend on a single export syntax.
+
+For example, a spacing token may internally be represented as a structured token within a `spacing` group rather than relying on a flat string such as:
+
+    spacing.4
+
+This is important because some export standards, including DTCG, use periods as alias syntax and therefore do not permit periods in token or group names.
+
+TokenForge should preserve hierarchy structurally and allow each export adapter to produce the appropriate target representation.
+
+---
+
+## 9. Semantic Tokens
+
+Semantic tokens represent design intent.
+
+Examples include:
+
+    text
+        primary
+        secondary
+
+    surface
+        default
+        raised
+
+    action
+        primary
+        secondary
+
+    border
+        default
+
+The exact semantic vocabulary is determined by the selected archetype.
+
+Semantic tokens should communicate meaningful design roles rather than arbitrary project-specific labels.
+
+For example:
+
+    Semantic role
+          ↓
+    Primitive reference
+          ↓
+    Resolved value
+
+This allows the underlying visual value to change without requiring every consuming component to be modified independently.
+
+---
+
+## 10. Token Identity
+
+Every token must have a stable internal identity within a project.
+
+A token's identity must not depend solely on its displayed or exported name.
+
+For example, a semantic token representing the primary action colour should remain the same logical token even if its primitive reference changes.
+
+    Primary action
+          ↓
+    Before: blue scale value
+          ↓
+    After: darker blue scale value
+
+The semantic token remains the same logical entity.
+
+Stable identity is required for:
+
+- References
+- Dependency tracking
+- Validation
+- Impact analysis
+- Component consumption
+- Renaming
+- Export
+- Change propagation
+
+---
+
+## 11. Token Naming Architecture
+
+Token names are part of the design-system architecture.
+
+TokenForge therefore does not treat token naming as unrestricted free-form text editing.
+
+The user can customise supported naming conventions, but the system must preserve consistency within each token category.
+
+### Category-level naming
+
+A naming convention applies to a category rather than to individual tokens.
+
+For example, a spacing scale may use:
+
+    Numeric
+
+    1
+    2
+    3
+    4
+    5
+    6
+
+or:
+
+    T-shirt
+
+    xs
+    sm
+    md
+    lg
+    xl
+    2xl
+
+If the user changes the spacing naming convention, the entire spacing category must be updated consistently.
+
+TokenForge must not allow a category to become a mixture of unrelated naming conventions.
+
+For example, this should not be permitted:
+
+    xs
+    spacing.2
+    medium
+    lg
+    whatever
+
+### Naming conventions preserve relationships
+
+Changing a naming convention must not change the underlying ordering, scale or relationships of the tokens.
+
+For example:
+
+    Numeric
+
+    1
+    2
+    3
+    4
+    5
+    6
+
+may become:
+
+    T-shirt
+
+    xs
+    sm
+    md
+    lg
+    xl
+    2xl
+
+while preserving the original scale relationships.
+
+---
+
+## 12. Primitive Naming
+
+Primitive token naming can provide greater customisation than semantic naming.
+
+Archetypes may provide supported naming conventions for categories such as:
+
+- Spacing
+- Colour scales
+- Typography scales
+- Radius
+- Elevation
+- Motion
+- Other appropriate primitive categories
+
+The user can select from or customise supported conventions where the archetype permits it.
+
+However, naming changes must remain internally coherent.
+
+TokenForge should favour category-level transformations over individual token renaming.
+
+---
+
+## 13. Semantic Naming
+
+Semantic names require stronger architectural protection than primitive names.
+
+A semantic token name communicates intent.
+
+For example:
+
+    text.primary
+    surface.default
+    action.primary
+    border.default
+
+These names describe what the token is for rather than merely what value it contains.
+
+Archetypes therefore establish the semantic vocabulary used by their generated systems.
+
+Users may be allowed to customise supported semantic naming conventions in the future, but TokenForge must prevent changes that make the semantic architecture contradictory, ambiguous or incoherent.
+
+Semantic naming should therefore be treated as a controlled part of the system architecture rather than unrestricted text.
+
+---
+
+## 14. Component Token Naming
+
+Component-level token names require the strongest structural constraints.
+
+A component token describes a value in the context of a specific component or component state.
+
+Examples include:
+
+    Button
+        primary
+        hover
+        disabled
+
+    Text Field
+        border
+        focus
+        error
+
+Component token naming must remain consistent with:
+
+- The component model
+- Component states
+- Semantic roles
+- Token relationships
+- The selected archetype
+
+Users should not be able to arbitrarily rename component tokens in a way that breaks these relationships.
+
+---
+
+## 15. Token References
+
+TokenForge supports references between tokens.
+
+A reference allows a token to derive its value from another token rather than duplicating the value.
+
+For example:
+
+    Semantic token
+          ↓
+    Primitive token
+          ↓
+    Resolved value
 
 References are important for:
 
@@ -172,307 +504,292 @@ References are important for:
 - Theming
 - Global changes
 - Semantic abstraction
+- Validation
 - Export
 
-TokenForge should preserve these relationships throughout editing and export where the target format supports them.
+TokenForge should preserve references throughout editing and export where the selected target format supports an equivalent representation.
+
+If a target format cannot preserve a reference directly, the export adapter must resolve it safely without changing the resulting design meaning.
 
 ---
 
-8. Token Types
+## 16. Token Dependencies
 
-A token has a defined type describing the kind of value it represents.
-
-The underlying model should be capable of representing standard design-token value categories without requiring every category to be supported by every V1 archetype.
-
-Potential categories include:
-
-- Color
-- Dimension
-- Number
-- Font family
-- Font weight
-- Duration
-- Cubic Bézier
-- Shadow
-- Border
-- Gradient
-- Typography
-
-The exact set supported by TokenForge V1 should be determined by product requirements and the capabilities of the selected archetypes.
-
-TokenForge should not expose unsupported token types merely because they exist in an external standard.
-
----
-
-9. Token Identity
-
-Every token must have a stable identity within a project.
-
-A token's identity should not depend solely on its displayed value.
+TokenForge maintains awareness of relationships between tokens.
 
 For example:
 
-color.action.primary
+    text.primary
+          ↓
+    neutral.900
+          ↓
+    Resolved colour
 
-should remain the same logical token even if its referenced primitive changes from:
+The dependency graph supports:
 
-color.blue.600
+- Change propagation
+- Validation
+- Impact analysis
+- Preview updates
+- Component updates
+- Export
 
-to:
+Circular dependencies must be detected and treated as invalid.
 
-color.blue.700
-
-This distinction allows users to modify the visual system without unintentionally changing the semantic structure.
+Unresolved references must also be detected by Validation.
 
 ---
 
-10. Token Metadata
+## 17. Token Metadata
 
-Where required, tokens may contain metadata describing their purpose and origin.
+Where required, tokens may contain metadata describing their purpose, structure or origin.
 
 Potential metadata includes:
 
-- Token name
+- Stable identity
 - Token type
 - Token value
 - Reference
 - Description
 - Group
 - Source
-- Status
 - Mode
-- Validation state
+- Validation information
 
-Metadata should support the product's editing, validation and export workflows without unnecessarily increasing complexity for the user.
-
----
-
-11. Archetype Relationship
-
-The Token Model does not prescribe a single universal token naming system.
-
-Instead, archetypes configure the token model.
-
-Token Model
-    │
-    ├── defines available structure
-    │
-    ↓
-Archetype
-    │
-    ├── defines naming
-    ├── defines token groups
-    ├── defines semantic roles
-    ├── defines scales
-    ├── defines relevant states
-    └── defines recommended relationships
-    │
-    ↓
-Project Token System
-
-This allows TokenForge to support different design-system philosophies without creating separate underlying token engines.
-
-The archetype therefore acts as the system blueprint, while the Token Model acts as the common underlying language.
+Metadata should support editing, validation and export without unnecessarily increasing the complexity presented to users.
 
 ---
 
-12. User Modification
+## 18. Modes and Themes
 
-Generated tokens are recommendations and starting structures rather than immutable output.
+The Token Model must be capable of supporting multiple modes or themes.
 
-Users should be able to modify supported token properties after generation.
+Examples include:
 
-Depending on the archetype and token type, this may include:
+    Light
+    Dark
+    High Contrast
+    Brand A
+    Brand B
 
-- Values
-- Names
-- References
-- Scales
-- Semantic assignments
-- Token groups
-- Supported metadata
+Modes allow the same semantic role to resolve to different underlying values.
 
-However, TokenForge should protect structural relationships where changing them would create invalid or contradictory systems.
+For example:
 
-The interface should make consequential changes clear to the user.
+    surface.default
+            │
+            ├── Light → light surface value
+            │
+            └── Dark  → dark surface value
 
----
+Support for multiple modes does not require every V1 archetype to expose multiple themes.
 
-13. Modes and Themes
-
-The token model should be capable of supporting multiple modes or themes where the selected archetype supports them.
-
-Examples:
-
-Light
-Dark
-High Contrast
-Brand A
-Brand B
-
-Modes should allow the same semantic role to resolve to different underlying values.
-
-Example:
-
-color.surface.default
-       ├── Light → color.neutral.0
-       └── Dark  → color.neutral.950
-
-Support for modes should not require every V1 archetype to implement multiple themes.
-
-The underlying model should simply avoid preventing future support.
+The underlying model must simply avoid preventing future support.
 
 ---
 
-14. Token Validation State
+## 19. Validation State
 
-TokenForge may associate validation information with tokens and token relationships.
+TokenForge may associate validation information with tokens and their relationships.
 
-A token may therefore be:
+A token or relationship may be associated with states such as:
 
-- Valid
-- Invalid
+- Pass
 - Warning
+- Error
 - Unresolved
 - Unused
 - Incomplete
 
-Validation state is derived from the validation system rather than becoming part of the token's design value.
+These states are produced by the Validation system.
 
-The token model should therefore allow validation information to be associated with tokens without treating validation status as part of the token itself.
+They are not part of the token's design value or identity.
 
----
-
-15. Token Dependencies
-
-Tokens may depend on other tokens through references.
-
-TokenForge should maintain awareness of these relationships.
-
-For example:
-
-color.action.primary
-        ↓
-color.blue.600
-        ↓
-#41727C
-
-This dependency graph can be used for:
-
-- Change propagation
-- Validation
-- Impact analysis
-- Preview updates
-- Export
-- Future tooling
-
-Circular dependencies should be detected and treated as invalid.
+The Token Model therefore provides the relationships and structure required for Validation without owning the validation rules themselves.
 
 ---
 
-16. Standards Compatibility
+## 20. Archetype Relationship
 
-TokenForge should remain compatible with recognised design-token standards where practical.
+The Token Model provides the common capabilities shared across TokenForge archetypes.
 
-The Design Tokens Community Group (DTCG) format should be treated as an important external interoperability target.
+The archetype configures those capabilities into a particular design-system architecture.
 
-However, the internal TokenForge model should not be unnecessarily constrained by the exact structure of an external interchange format.
+    Token Model
+         │
+         ├── Token types
+         ├── Token relationships
+         ├── Identity
+         ├── Structural rules
+         └── Common capabilities
+                 │
+                 ↓
+             Archetype
+                 │
+                 ├── Token groups
+                 ├── Naming conventions
+                 ├── Scales
+                 ├── Semantic roles
+                 ├── Recommended relationships
+                 └── Component usage
+                         │
+                         ↓
+                 Generated Token System
 
-The distinction is:
+Different archetypes may organise the same underlying capabilities differently.
 
-TokenForge internal model
-        ↓
-Transformation
-        ↓
-DTCG / other export format
-
-This allows TokenForge to optimise its internal representation for the application while still producing standards-compatible output.
+The archetype therefore acts as the system blueprint while the Token Model acts as the common underlying language.
 
 ---
 
-17. Source of Truth
+## 21. User Modification
+
+Generated tokens are recommendations and starting structures rather than immutable output.
+
+Users should be able to modify supported properties after generation.
+
+Depending on the token category and archetype, this may include:
+
+- Values
+- References
+- Naming conventions
+- Scales
+- Semantic assignments
+- Supported groups
+- Supported metadata
+- Modes where available
+
+Token names should not be treated as unrestricted individual text fields.
+
+Changes to naming conventions must preserve category-level consistency.
+
+TokenForge should protect structural relationships where changing them would create invalid or contradictory systems.
+
+Consequential changes should be made clear to the user.
+
+---
+
+## 22. Source of Truth
 
 Within a TokenForge project, the generated and subsequently modified token system becomes the project's source of truth.
 
-The archetype provides the initial configuration.
+The archetype provides the initial architecture.
 
-The user-approved token system becomes the actual project system.
+The user refines that architecture.
 
-Archetype
-    ↓
-Initial generation
-    ↓
-User refinement
-    ↓
-Approved token system
-    ↓
-Source of truth
+The approved token system becomes the authoritative project representation.
 
-Exported files are representations of that source of truth rather than independent versions of it.
+    Archetype
+         ↓
+    Initial generation
+         ↓
+    User refinement
+         ↓
+    Validation
+         ↓
+    Approved token system
+         ↓
+    Source of truth
+
+Components, Validation and exports consume or evaluate this source of truth.
+
+Exported files are representations of the source of truth rather than independent versions of it.
 
 ---
 
-18. V1 Requirements
+## 23. Standards Compatibility
 
-V1 requires the token model to support:
+TokenForge should remain compatible with recognised design-token standards where practical.
+
+The Design Tokens Community Group (DTCG) format is an important interoperability target.
+
+However, the internal TokenForge model should not be unnecessarily constrained by the exact structure of an external interchange format.
+
+The intended relationship is:
+
+    TokenForge Internal Model
+              ↓
+          Export Adapter
+              ↓
+    DTCG / CSS / Tailwind / JavaScript-TypeScript
+
+The internal model must therefore remain structurally robust enough to represent the design system independently of a particular export syntax.
+
+Export adapters are responsible for translating the internal model into the conventions and limitations of the selected target format.
+
+---
+
+## 24. V1 Requirements
+
+TokenForge V1 requires the Token Model to support:
 
 - Primitive tokens
 - Semantic tokens
+- Component consumption
 - Token references
-- Token types required by V1
+- Token dependencies
 - Stable token identity
+- V1 primitive token types
+- V1 composite token types
+- Structured token hierarchy
+- Category-level naming conventions
+- Semantic naming constraints
 - Token metadata required by the product
 - Archetype-generated structures
-- User modification
+- User refinement
 - Validation relationships
-- Component consumption
+- Modes where required by an archetype
 - Exportable representation
 
-V1 does not require every possible design-token type or advanced token capability.
+V1 does not require every possible design-token capability or external standard feature.
 
-The model should be extensible without unnecessarily increasing V1 complexity.
-
----
-
-19. V1 Boundary
-
-The Token Model defines the underlying system, not the complete behaviour of each archetype.
-
-The following therefore belong elsewhere:
-
-Concern| Document
-Product requirements| "PRODUCT.md"
-Archetype definitions| "ARCHETYPES.md"
-Colour generation| "COLOUR-ENGINE.md"
-Validation rules| "VALIDATION.md"
-Component catalogue| "COMPONENTS.md"
-Export implementation| "EXPORT-SYSTEM.md"
-Application architecture| "ARCHITECTURE.md"
-
-This separation prevents the token model from becoming an uncontrolled collection of product requirements.
+The model should remain extensible without unnecessarily increasing V1 complexity.
 
 ---
 
-20. Summary
+## 25. V1 Boundary
 
-The Token Model provides the common foundation that allows TokenForge to support different design-system archetypes while maintaining a consistent internal architecture.
+The Token Model defines the underlying token system rather than the complete behaviour of every TokenForge subsystem.
+
+| Concern | Document |
+|---|---|
+| Product requirements | `PRODUCT.md` |
+| Archetype definitions | `ARCHETYPES.md` |
+| Colour generation and colour mathematics | `COLOUR-ENGINE.md` |
+| Validation rules and evaluation | `VALIDATION.md` |
+| Component catalogue and behaviour | `COMPONENTS.md` |
+| Export implementation | `EXPORT-SYSTEM.md` |
+| Application architecture | `ARCHITECTURE.md` |
+| AI capabilities and boundaries | `AI-SYSTEM.md` |
+
+This separation prevents the Token Model from becoming an uncontrolled collection of product requirements.
+
+---
+
+## 26. Summary
+
+The Token Model provides the common foundation that allows TokenForge to represent different design-system architectures while maintaining a consistent internal model.
 
 Its core relationship is:
 
-Foundations
-     ↓
-Archetype
-     ↓
-Primitive Tokens
-     ↓
-Semantic Tokens
-     ↓
-Components
-     ↓
-Validation
-     ↓
-Export
+    Common Token Model
+           ↓
+        Archetype
+           ↓
+    Generated Token System
+           ↓
+    User Refinement
+           ↓
+    Approved Token System
+           ↓
+    Components / Validation / Export
 
-The key principle is:
+The key principles are:
 
-«The token model defines what TokenForge can represent. The archetype defines how a particular project uses that model.»
+> **The Token Model defines what TokenForge can represent.**
+
+> **The archetype defines how a particular project organises and uses that model.**
+
+> **Naming can be customised through controlled category-level conventions, not unrestricted individual renaming.**
+
+> **The approved token system is the project's source of truth.**
