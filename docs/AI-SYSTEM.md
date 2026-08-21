@@ -24,23 +24,25 @@ AI is therefore an optional assistance layer, not the source of truth for the de
 
 TokenForge V1 does not require generative AI to perform its core functionality.
 
-The V1 workflow remains:
+The core V1 workflow remains:
 
     User Input
         ↓
     Archetype
         ↓
-    Token Model
+    Token Generation
         ↓
-    Generation
+    Token Editing
         ↓
-    User Refinement
+    System Validation
         ↓
-    Validation
+    Export Selection
         ↓
-    Components
+    Export Readiness
         ↓
     Export
+
+The Component Lab is a parallel visualisation and design-system stress-testing environment. It consumes the current canonical token system and allows users to see how token values affect reference components, but it is not a required stage or gate in the export workflow.
 
 These systems must function without an AI model.
 
