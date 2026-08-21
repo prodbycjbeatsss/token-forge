@@ -644,7 +644,7 @@ This separation prevents unrelated validation concerns from becoming mixed toget
 
 ---
 
-## 27. Validation and Components
+27. Validation and Components
 
 Components provide realistic consumers of the token system.
 
@@ -657,7 +657,33 @@ Examples include:
 - Insufficient contrast in a component state
 - Missing required semantic role
 
-To facilitate this without duplicating logic, the Validation Engine operates on a strict data contract: every validation result includes an array of `affectedTokenIds`. The Component Lab subscribes to this array, allowing the UI to visually flag the exact anatomical part of a component that caused the validation failure, directly within the component preview.
+To facilitate this without duplicating validation logic, the Validation Engine operates on a strict data contract.
+
+Every validation result that is relevant to component usage includes an "affectedTokenIds" array identifying the token IDs associated with the result.
+
+The Component Lab maintains a flat list of the token IDs consumed by the currently selected component, variant and state.
+
+The Component Lab then performs a simple intersection between:
+
+Component Token IDs
+        +
+Validation affectedTokenIds
+        ↓
+Component validation status
+
+If the intersection is non-empty, the Component Lab flags the component as having a relevant validation issue and exposes the associated validation results in the validation panel.
+
+The Component Lab does not implement a separate validation engine.
+
+V1 does not require the Component Lab to identify or visually highlight the exact anatomical DOM element responsible for a validation failure.
+
+The user relies on:
+
+- The live component preview to see the practical visual effect
+- The component's validation status
+- The validation panel to identify the affected token IDs and explain the underlying issue
+
+This keeps the V1 architecture deterministic and lightweight while preserving a clear relationship between token changes, component usage and validation results.
 
 ---
 

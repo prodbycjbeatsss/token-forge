@@ -718,19 +718,83 @@ Exported files are representations of the source of truth rather than independen
 
 ---
 
-## 24. Standards Compatibility & Translation Exemption
+24. Standards Compatibility and Export Translation
 
 TokenForge should remain compatible with recognised design-token standards where practical.
 
-The Design Tokens Community Group (DTCG) format is an important interoperability target. However, the internal TokenForge model should not be unnecessarily constrained by the strict syntax rules of an external interchange format (such as DTCG prohibiting the use of `.`).
+The Design Tokens Community Group (DTCG) format is an important V1 interoperability target. However, the internal TokenForge model must not be unnecessarily constrained by the syntax requirements of an external interchange format.
 
-To resolve conflicts between internal architectural models and external standards, the **Deterministic Translation Exemption** applies:
+The canonical TokenForge naming architecture and internal token structure remain independent of any single export format.
 
-> Export Adapters are explicitly permitted to perform deterministic syntax translations—such as converting internal hierarchy strings (e.g. `color.text.primary`) into nested JSON objects, or replacing invalid characters to satisfy target compiler constraints. 
+Deterministic Export Translation
 
-This translation is purely a representation step and does **not** violate the rule against mutating the canonical source system. 
+Export adapters may perform deterministic syntax translations when required by a selected target format.
 
-Export adapters are responsible for translating the internal model into the conventions and limitations of the selected target format.
+For example, an internal structured token representation may be transformed into the nested object structure required by DTCG-compatible JSON.
+
+The translation:
+
+- Must be deterministic
+- Must be reproducible
+- Must preserve token identity
+- Must preserve token relationships
+- Must preserve meaningful token information
+- Must be applied consistently to token references
+- Must be collision-free
+- Must not mutate the canonical TokenForge token system
+
+For example:
+
+Canonical TokenForge model
+        ↓
+Export-specific transformation
+        ↓
+Target representation
+
+The transformation exists only in the exported representation.
+
+Collision Handling
+
+A transformation must not cause two distinct TokenForge tokens or groups to resolve to the same target name.
+
+For example:
+
+Internal A → target-name
+Internal B → target-name
+
+is an export collision.
+
+If a safe deterministic transformation cannot produce unique target names, Export Readiness Validation must report the incompatibility and block the export.
+
+The adapter must not:
+
+- Silently merge tokens
+- Silently overwrite tokens
+- Arbitrarily rename tokens
+- Mutate the canonical token system
+- Break references to make the export succeed
+
+Target-Specific Restrictions
+
+Restrictions imposed by a particular export format should remain primarily within that format's export-readiness rules.
+
+A DTCG naming restriction, for example, does not automatically become a global TokenForge naming restriction.
+
+The relationship is:
+
+TokenForge Internal Model
+        ↓
+Selected Export Format
+        ↓
+Target Compatibility Check
+        ↓
+Safe deterministic translation?
+      ↙       ↘
+    Yes        No
+     ↓          ↓
+  Export      Error
+
+This allows TokenForge to maintain a coherent internal design-system model while still producing valid representations for different external formats.
 
 ---
 

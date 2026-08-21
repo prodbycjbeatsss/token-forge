@@ -1,15 +1,15 @@
-# TokenForge — Architecture
+TokenForge — Architecture
 
-**Project:** TokenForge  
-**Document:** Architecture  
-**Status:** Active  
-**Version:** 1.1  
-**Last Updated:** 21 August 2026  
-**Purpose:** Define the high-level technical architecture, system boundaries, dependencies and data flow required to implement TokenForge V1.
+Project: TokenForge
+Document: Architecture
+Status: Active
+Version: 1.2
+Last Updated: 21 August 2026
+Purpose: Define the high-level technical architecture, system boundaries, dependencies and data flow required to implement TokenForge V1.
 
 ---
 
-## 1. Architectural Purpose
+1. Architectural Purpose
 
 TokenForge is structured as a deterministic design-token authoring, evaluation and export system.
 
@@ -28,35 +28,43 @@ Each system has a defined responsibility and should not duplicate the responsibi
 
 ---
 
-## 2. Core Architecture
+2. Core Architecture
 
 The high-level architecture is:
 
-    User
-      ↓
-    Application UI
-      ↓
-    Project State
-      ↓
-    Token Model
-      ↓
-    ┌───────────────┬────────────────┬─────────────────┐
-    ↓               ↓                ↓                 ↓
-  Archetypes    Colour Engine    Components       Validation
-    │               │                │                 │
-    └───────────────┴────────────────┴─────────────────┘
-                            ↓
-                    Validated Token System
-                            ↓
-                       Export System
-                            ↓
-                 JSON / CSS / Tailwind / JS-TS
+User
+  ↓
+Application UI
+  ↓
+Project State
+  ↓
+Token Model
+  ↓
+┌───────────────┬────────────────┬─────────────────┐
+↓               ↓                ↓                 ↓
+
+Archetypes    Colour Engine    Components       Validation
+│               │                │                 │
+│               │                │                 │
+└───────────────┴────────────────┴─────────────────┘
+↓
+Validated Token System
+↓
+Export System
+↓
+JSON / CSS / Tailwind / JS-TS
 
 The Token Model is the central representation used by the other systems.
 
+Components and Validation are not sequential workflow stages.
+
+Components consume the current token system to provide realistic visual usage.
+
+Validation evaluates the current token system and, where applicable, uses component-context information to evaluate token relationships in realistic usage.
+
 ---
 
-## 3. Canonical Token Model
+3. Canonical Token Model
 
 The Token Model provides the canonical internal representation of the design-token system.
 
@@ -73,11 +81,11 @@ The Token Model is responsible for:
 - Composite token representation
 - Token metadata required by the application
 
-The complete token architecture is defined in `TOKEN-MODEL.md`.
+The complete token architecture is defined in "TOKEN-MODEL.md".
 
 ---
 
-## 4. Archetypes
+4. Archetypes
 
 Archetypes configure how the common Token Model is used.
 
@@ -96,7 +104,7 @@ An archetype must not create an incompatible private token architecture.
 
 ---
 
-## 5. Colour Engine
+5. Colour Engine
 
 The Colour Engine is responsible for colour generation and colour calculations.
 
@@ -116,7 +124,7 @@ That responsibility belongs to Validation.
 
 ---
 
-## 6. Components
+6. Components
 
 Components consume the token system in realistic interface contexts.
 
@@ -128,39 +136,45 @@ Components should consume semantic tokens rather than bypassing the token archit
 
 The component system is not a full component-library authoring platform in V1.
 
+Components are a consumer of the token system, not a processing stage in the core token-generation and export workflow.
+
 ---
 
-## 7. Validation
+7. Validation
 
 Validation evaluates the current token system.
 
 It is divided conceptually into:
 
-### System Validation
+System Validation
 
 Evaluates whether the token system itself is valid and coherent.
 
-### Export Readiness Validation
+Export Readiness Validation
 
 Evaluates whether the current system can be represented by the selected export format.
 
 The relationship is:
 
-    Token System
-         ↓
-    System Validation
-         ↓
-    Export Selection
-         ↓
-    Export Readiness
-         ↓
-    Export
+Token System
+     ↓
+System Validation
+     ↓
+Export Selection
+     ↓
+Export Readiness
+     ↓
+Export
 
 Validation does not generate tokens or perform colour calculations.
 
+Where contextual component usage is relevant to a validation rule, Validation may evaluate the token relationships used by the Component Lab.
+
+The Component Lab does not implement a separate validation engine.
+
 ---
 
-## 8. Export System
+8. Export System
 
 The Export System converts the canonical token model into supported target representations.
 
@@ -179,37 +193,57 @@ They do not redefine the Token Model or perform general system validation.
 
 ---
 
-## 9. Data Flow
+9. Data Flow
 
-The primary data flow is:
+The primary token and export workflow is:
 
-    Project Configuration
-            ↓
-       Archetype
-            ↓
-    Generation Systems
-            ↓
-       Token Model
-            ↓
-       User Editing
-            ↓
-       Components
-            ↓
-    System Validation
-            ↓
-    Export Configuration
-            ↓
-    Export Readiness
-            ↓
-       Export Adapter
-            ↓
-      Target Output
+Project Configuration
+        ↓
+   Archetype
+        ↓
+Generation Systems
+        ↓
+   Token Model
+        ↓
+   User Editing
+        ↓
+System Validation
+        ↓
+Export Selection
+        ↓
+Export Readiness
+        ↓
+   Export Adapter
+        ↓
+  Target Output
 
-The Token Model remains the canonical state throughout this process.
+The Component Lab operates alongside this workflow:
+
+Token Model
+     ↓
+Component Definitions
+     ↓
+Component Preview
+     ↓
+Visual Feedback
+
+Where relevant, component usage can provide contextual information to Validation:
+
+Token Model
+     ↓
+Component Usage
+     ↓
+Validation Context
+     ↓
+Validation Result
+
+The Component Lab therefore does not sit between User Editing and System Validation.
+
+The Token Model remains the canonical state throughout the process.
 
 ---
 
-## 10. State and Recalculation
+10. State and Recalculation
 
 Derived information must not become an independent source of truth.
 
@@ -217,31 +251,33 @@ When relevant source data changes, dependent systems must be recalculated or inv
 
 Examples:
 
-    Primitive token changes
-            ↓
-    Dependent semantic tokens
-            ↓
-    Component results
-            ↓
-    Validation results
-            ↓
-    Export readiness
+Primitive token changes
+        ↓
+Dependent semantic tokens
+        ↓
+Component results
+        ↓
+Validation results
+        ↓
+Export readiness
 
 Similarly:
 
-    CSS selected
-         ↓
-    CSS readiness
-         ↓
-    User selects JavaScript / TypeScript
-         ↓
-    JavaScript / TypeScript readiness
+CSS selected
+     ↓
+CSS readiness
+     ↓
+User selects JavaScript / TypeScript
+     ↓
+JavaScript / TypeScript readiness
 
 The previous readiness result must not be reused.
 
+Component previews and validation results are derived from the current token system and must update when relevant token values or relationships change.
+
 ---
 
-## 11. Naming Architecture
+11. Naming Architecture
 
 Token naming is part of the token-system architecture rather than an arbitrary UI preference.
 
@@ -251,11 +287,11 @@ A naming convention change must remain internally consistent.
 
 For example, changing the naming convention for spacing should update the relevant spacing naming scheme consistently rather than allowing isolated token renames that create a mixed convention.
 
-The detailed naming architecture belongs to `TOKEN-MODEL.md`.
+The detailed naming architecture belongs to "TOKEN-MODEL.md".
 
 ---
 
-## 12. Deterministic Core
+12. Deterministic Core
 
 TokenForge should use deterministic logic wherever the required result can be defined reliably through explicit rules.
 
@@ -272,7 +308,7 @@ This makes results reproducible and testable.
 
 ---
 
-## 13. AI Boundary
+13. AI Boundary
 
 AI is not required for the core TokenForge architecture.
 
@@ -286,7 +322,7 @@ Such functionality must remain outside the core token-model and validation archi
 
 ---
 
-## 14. Source of Truth
+14. Source of Truth
 
 The current project state and canonical Token Model are the source of truth.
 
@@ -303,24 +339,23 @@ These are derived from the current project state.
 
 ---
 
-## 15. System Boundaries
+15. System Boundaries
 
-| System | Responsibility |
-|---|---|
-| Project State | Current user/project configuration |
-| Token Model | Canonical token representation |
-| Archetypes | Token-system configuration and generation strategy |
-| Colour Engine | Colour calculation and generation |
-| Components | Realistic token consumption |
-| Validation | System and export-readiness evaluation |
-| Export System | Target-format transformation |
-| Persistence | Saving and restoring project state |
+System| Responsibility
+Project State| Current user/project configuration
+Token Model| Canonical token representation
+Archetypes| Token-system configuration and generation strategy
+Colour Engine| Colour calculation and generation
+Components| Realistic token consumption
+Validation| System and export-readiness evaluation
+Export System| Target-format transformation
+Persistence| Saving and restoring project state
 
 A system should not absorb responsibilities belonging to another system simply because the implementation is convenient.
 
 ---
 
-## 16. V1 Architectural Boundary
+16. V1 Architectural Boundary
 
 V1 should contain only the systems necessary to create and use a functioning design-token system.
 
@@ -338,11 +373,11 @@ These may be introduced later without changing the fundamental Token Model.
 
 ---
 
-## 17. Architectural Principle
+17. Architectural Principle
 
 The architecture should preserve one central principle:
 
-> **One canonical token system, multiple consumers and representations.**
+«One canonical token system, multiple consumers and representations.»
 
 Components consume it.
 
@@ -358,16 +393,16 @@ No secondary system should silently replace the canonical model.
 
 ---
 
-## 18. Related Documents
+18. Related Documents
 
 Detailed implementation rules are defined in:
 
-- `PRODUCT.md`
-- `TOKEN-MODEL.md`
-- `ARCHETYPES.md`
-- `COLOUR-ENGINE.md`
-- `COMPONENTS.md`
-- `VALIDATION.md`
-- `EXPORT-SYSTEM.md`
+- "PRODUCT.md"
+- "TOKEN-MODEL.md"
+- "ARCHETYPES.md"
+- "COLOUR-ENGINE.md"
+- "COMPONENTS.md"
+- "VALIDATION.md"
+- "EXPORT-SYSTEM.md"
 
 This document provides the architectural relationship between those systems rather than redefining their individual specifications.
