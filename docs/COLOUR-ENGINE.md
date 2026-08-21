@@ -5,19 +5,21 @@
 **Status:** Active  
 **Version:** 1.1  
 **Last Updated:** 21 August 2026  
-**Purpose:** Define how TokenForge accepts brand colours, generates colour palettes and semantic colour roles, handles colour-space and gamut constraints, evaluates accessibility, and incorporates user refinement.
+**Purpose:** Define how TokenForge accepts brand colours, generates colour palettes and semantic colour roles, handles colour-space and gamut constraints, calculates accessibility metrics, and incorporates user refinement.
 
 ---
 
 ## 1. Purpose
 
-The Colour Engine is the deterministic colour-generation and evaluation layer of TokenForge.
+The Colour Engine is the deterministic colour-generation and colour-calculation layer of TokenForge.
 
 It converts user-provided colour foundations into a coherent set of primitive and semantic colour tokens while preserving the design intent established by the selected archetype.
 
-The Colour Engine is responsible for colour mathematics and colour-system generation. It does not independently decide the visual identity of a project.
+The Colour Engine is responsible for colour mathematics and colour-system generation. It does not independently decide the visual identity of a project and it does not own TokenForge's validation rules.
 
 The selected archetype supplies the colour-generation strategy and semantic mapping, while the Colour Engine supplies the common technical capabilities required to execute that strategy.
+
+The Colour Engine may calculate metrics required by validation, such as contrast ratios, and may generate candidate corrections. The Validation system remains responsible for determining whether those results satisfy TokenForge's applicable rules.
 
     User colour input
           ↓
@@ -33,7 +35,9 @@ The selected archetype supplies the colour-generation strategy and semantic mapp
           ↓
     Semantic roles
           ↓
-    Accessibility + component validation
+    Colour calculations
+          ↓
+    System Validation
           ↓
     User refinement
           ↓
@@ -46,13 +50,14 @@ The selected archetype supplies the colour-generation strategy and semantic mapp
 The Colour Engine follows these principles:
 
 1. **Perceptual operations should use perceptually useful colour spaces.**
-2. **Accessibility must be measured using the applicable accessibility definitions rather than inferred from a colour-space coordinate.**
+2. **Accessibility metrics must be calculated using the applicable accessibility definitions rather than inferred from a colour-space coordinate.**
 3. **Gamut constraints must be handled explicitly.**
 4. **Archetypes determine design strategy; the Colour Engine provides common technical capabilities.**
 5. **Generated colours are recommendations that users can inspect and override.**
 6. **Core colour generation must be deterministic and reproducible.**
 7. **AI must not be the authority for colour validity, contrast or colour-space mathematics.**
 8. **Final colour decisions must be validated in their intended UI context rather than only as isolated swatches.**
+9. **The Colour Engine calculates and generates colour information; the Validation system determines whether the resulting system satisfies TokenForge rules.**
 
 ---
 
@@ -185,13 +190,13 @@ A palette-generation strategy may control:
 - End-point behaviour
 - Target gamut
 - Required semantic relationships
-- Contrast requirements
+- Contrast targets
 
 A simple lightness ladder must not be assumed to produce a high-quality UI palette.
 
 For example, generating a scale by changing only `L` while keeping `C` and `H` constant may produce colours that become impossible to represent in the target gamut or behave poorly at the extremes.
 
-The generation algorithm should therefore evaluate the resulting candidates rather than assuming the mathematical input is sufficient.
+The generation algorithm should therefore calculate and inspect the resulting candidates rather than assuming the mathematical input is sufficient.
 
 ---
 
@@ -276,7 +281,7 @@ The semantic system must be generated from the archetype's requirements and the 
 
 ## 12. State Colours
 
-Where the selected archetype requires state colours, the Colour Engine may generate or evaluate families for roles such as:
+Where the selected archetype requires state colours, the Colour Engine may generate or calculate colour candidates for roles such as:
 
 - Success
 - Warning
@@ -285,7 +290,7 @@ Where the selected archetype requires state colours, the Colour Engine may gener
 
 State colours must be treated as functional colours rather than merely decorative alternatives to the brand palette.
 
-Their semantic roles, states and contrast relationships must be validated in context.
+Their semantic roles, states and contrast relationships must subsequently be evaluated by the Validation system in context.
 
 The Colour Engine must not assume that a generic green, yellow or red is automatically appropriate for a given role.
 
@@ -316,7 +321,7 @@ Instead:
 
     WCAG
           ↓
-    Accessibility constraint
+    Accessibility measurement
 
 This separation prevents subjective colour theory from being mistaken for an accessibility or perceptual guarantee.
 
@@ -364,7 +369,9 @@ Output conversion should occur as a deliberate final step rather than treating s
 
 Accessibility validation must be performed independently from perceptual palette generation.
 
-TokenForge should calculate WCAG contrast using relative luminance and the applicable contrast-ratio definition.
+The Colour Engine should calculate WCAG contrast using relative luminance and the applicable contrast-ratio definition.
+
+The resulting contrast metrics are inputs to the Validation system. The Colour Engine does not determine whether a token relationship passes or fails a TokenForge validation rule.
 
 For normal text, WCAG 2.2 SC 1.4.3 defines a minimum contrast ratio of 4.5:1, with 3:1 applicable to large text. SC 1.4.11 establishes a 3:1 minimum for relevant non-text UI components and graphical objects.
 
@@ -380,7 +387,11 @@ Conceptually:
           ↓
     Contrast ratio
           ↓
-    Applicable WCAG requirement
+    Validation
+          ↓
+    Applicable TokenForge rule
+          ↓
+    Pass / Fail
 
 ---
 
@@ -396,7 +407,9 @@ Examples include:
           +
     surface.default
           ↓
-    contrast test
+    contrast calculation
+          ↓
+    Validation
 
 and:
 
@@ -404,37 +417,47 @@ and:
           +
     action.primary
           ↓
-    contrast test
+    contrast calculation
+          ↓
+    Validation
 
-This means accessibility validation belongs partly at the semantic and component levels rather than exclusively at the primitive level.
+This means accessibility evaluation belongs partly at the semantic and component levels rather than exclusively at the primitive level.
 
-The full validation process is defined by `VALIDATION.md`.
+The Colour Engine supplies the required colour calculations.
+
+The full validation process, including the rules used to interpret those calculations, is defined by `VALIDATION.md`.
 
 ---
 
 ## 18. Contrast Repair
 
-When a generated semantic colour fails an applicable contrast requirement, TokenForge should attempt a constrained correction where an appropriate correction strategy exists.
+When a generated semantic colour does not meet an applicable contrast target, TokenForge may attempt a constrained correction where an appropriate correction strategy exists.
+
+The Colour Engine is responsible for generating and evaluating candidate colour values.
+
+The Validation system determines whether a candidate satisfies the applicable rule.
 
 The conceptual process is:
 
     Generated candidate
           ↓
-    Contrast test
+    Contrast calculation
           ↓
-    FAIL
+    Validation identifies failure
           ↓
     Generate nearby candidates
           ↓
-    Evaluate contrast + colour difference
+    Calculate contrast + colour difference
           ↓
-    Select suitable valid candidate
+    Validation evaluates candidates
+          ↓
+    Select suitable candidate
 
 The repair process should attempt to preserve the intended visual character rather than making an arbitrary colour substitution.
 
 Where possible, the correction should prioritise minimal perceptual deviation while satisfying the applicable requirement.
 
-A repaired value must remain subject to gamut validation.
+A repaired value must remain subject to gamut handling and subsequent validation.
 
 ---
 
@@ -444,7 +467,7 @@ Users may override generated colour values.
 
 A user override does not invalidate the archetype.
 
-Instead, TokenForge should re-run the relevant validation against the new value.
+Instead, TokenForge should recalculate the relevant colour metrics and re-run the relevant validation against the new value.
 
     Generated value
           ↓
@@ -502,9 +525,10 @@ However, deterministic TokenForge logic remains authoritative for:
 
 - Colour conversion
 - Palette generation
-- Gamut validation
+- Gamut handling
 - Contrast calculation
 - Token validity
+- Validation decisions
 
     AI
      ↓
@@ -542,17 +566,21 @@ The V1 pipeline is:
                  ↓
     10. Apply gamut mapping where required (via Color.js or equivalent)
                  ↓
-    11. Evaluate WCAG contrast relationships
+    11. Calculate required colour metrics
                  ↓
-    12. Repair failing candidates where appropriate
+    12. Generate correction candidates where appropriate
                  ↓
-    13. Validate component/state usage
+    13. Pass relevant colour relationships and metrics to Validation
                  ↓
     14. Present generated system to user
                  ↓
     15. Accept user overrides
                  ↓
     16. Recalculate and revalidate
+
+The Colour Engine performs the colour calculations and candidate generation in this pipeline.
+
+The Validation system determines whether the resulting system satisfies TokenForge's validation rules.
 
 ---
 
@@ -561,7 +589,7 @@ The V1 pipeline is:
 V1 should support:
 
 - User-defined brand colours
-- Colour parsing and validation
+- Colour parsing and input validation
 - Colour-space-aware processing
 - OKLCH-based perceptual manipulation
 - Primitive colour-scale generation
@@ -647,6 +675,8 @@ A TokenForge design decision must not be presented as a standard requirement whe
 
 Likewise, an implementation convenience must not override a normative accessibility or colour specification.
 
+For validation decisions, `VALIDATION.md` is authoritative for the TokenForge rules applied to calculated colour metrics.
+
 ---
 
 ## 27. Relationship to Other Documents
@@ -657,8 +687,8 @@ Likewise, an implementation convenience must not override a normative accessibil
 | Source authority | `SOURCES.md` |
 | Token structure | `TOKEN-MODEL.md` |
 | Archetype colour strategy | `ARCHETYPES.md` |
-| Colour generation | `COLOUR-ENGINE.md` |
-| Validation | `VALIDATION.md` |
+| Colour generation and calculation | `COLOUR-ENGINE.md` |
+| Validation rules | `VALIDATION.md` |
 | Component usage | `COMPONENTS.md` |
 | Design-system implementation | `DESIGN-SYSTEM.md` |
 | Export | `EXPORT-SYSTEM.md` |
@@ -670,7 +700,7 @@ Likewise, an implementation convenience must not override a normative accessibil
 
 ## 28. Summary
 
-The TokenForge Colour Engine is a deterministic, colour-space-aware system for transforming user colour foundations into validated design-token colour systems.
+The TokenForge Colour Engine is a deterministic, colour-space-aware system for transforming user colour foundations into design-token colour systems and providing the colour calculations required for contextual validation.
 
 Its architecture deliberately separates three concerns:
 
@@ -687,8 +717,12 @@ Its architecture deliberately separates three concerns:
     USER REFINEMENT
     What does the user ultimately want their system to be?
 
+The Colour Engine performs the colour mathematics required to generate and analyse colour candidates.
+
+Validation interprets those calculations against TokenForge's defined rules and determines pass/fail status.
+
 OKLCH provides the primary working space for controlled perceptual manipulation, while WCAG relative-luminance calculations provide independent accessibility measurement. Gamut handling ensures generated colours remain representable in their intended output space using vetted implementations such as `Color.js`.
 
-The Colour Engine generates recommendations; the archetype provides the design direction; the user remains the final authority over the resulting design system.
+The Colour Engine generates recommendations and calculations; the archetype provides the design direction; Validation determines whether the resulting system satisfies the applicable rules; the user remains the final authority over the resulting design system.
 
 > **Generate with colour science. Structure with the archetype. Validate in context. Let the user decide.**
