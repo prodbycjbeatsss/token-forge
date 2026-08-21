@@ -50,9 +50,11 @@ The goal is to create a coherent system that can be understood, used and maintai
 
 ---
 
-## 3. Design-System Layers
+## 3. Design-System Architecture
 
-TokenForge uses a layered architecture:
+TokenForge uses a layered token architecture with Component Lab consumption alongside the core system workflow.
+
+The canonical relationship is:
 
     Foundations
          ↓
@@ -60,13 +62,21 @@ TokenForge uses a layered architecture:
          ↓
     Semantic Tokens
          ↓
-    Component Consumption
-         ↓
-    Validation
-         ↓
-    Export
+    User-Approved Token System
+         ├───────────────→ Component Lab
+         │                  ↓
+         │            Visualisation
+         │            & Stress Testing
+         │
+         └───────────────→ System Validation
+                            ↓
+                       Export Selection
+                            ↓
+                     Export Readiness
+                            ↓
+                          Export
 
-Each layer has a different purpose.
+Each part has a different purpose.
 
 ### Foundations
 
@@ -101,17 +111,36 @@ Examples:
     color.surface.default
     color.action.primary
 
-### Component Consumption
+### Component Lab
 
-The point at which semantic tokens are applied to interface components.
+The Component Lab consumes the current token system and demonstrates how those tokens behave when applied to reference components.
 
-### Validation
+It provides:
 
-The system evaluates whether the resulting relationships and usage are valid.
+- Visualisation
+- Design-system stress testing
+- Reference component states
+- Contextual feedback
+
+The Component Lab is not a required stage in the token-generation or export workflow.
+
+It does not maintain an independent copy of the token system.
+
+### System Validation
+
+The system evaluates whether the current token system satisfies the applicable format-independent TokenForge rules.
+
+### Export Selection
+
+The user selects one of the supported V1 export formats.
+
+### Export Readiness
+
+The selected export target is evaluated for format-specific compatibility.
 
 ### Export
 
-The complete user-approved system is transformed into the selected external representation.
+The validated and export-ready token system is transformed into the selected external representation.
 
 ---
 
@@ -185,7 +214,7 @@ Changing the primitive can therefore alter the appearance of the interface witho
 
 ---
 
-## 7. Component Layer
+## 7. Component Lab
 
 Components demonstrate how the design system behaves when used in an interface.
 
@@ -199,16 +228,37 @@ The preferred relationship is:
 
 Components should normally consume semantic tokens rather than arbitrary primitive values.
 
-TokenForge V1 provides reference components to exercise the design system.
+TokenForge V1 provides 12 reference components to exercise the design system:
+
+- Button
+- Icon Button
+- Badge
+- Text Field
+- Select
+- Checkbox
+- Radio
+- Switch
+- Tabs
+- Card
+- Dialog
+- Tooltip
 
 These components are:
 
 - Demonstration tools
 - Stress tests
-- Validation targets
 - Visualisation tools
+- Contextual evaluation targets
 
-They are not intended to become a complete production component library.
+The Component Lab does not become a production component library.
+
+It does not generate production component code.
+
+It does not maintain an independent copy of token values.
+
+It consumes the current canonical token system so that changes to tokens are reflected in the reference components.
+
+The Component Lab is not a prerequisite for system validation, export readiness or export.
 
 ---
 
@@ -244,7 +294,13 @@ Token names and groups are determined by the selected archetype within the capab
 
 TokenForge should not impose one universal naming architecture across every archetype.
 
-For example, two archetypes may use different naming conventions while remaining compatible with the same underlying Token Model.
+For example, two archetypes may use different supported naming conventions while remaining compatible with the same underlying Token Model.
+
+Naming customisation must remain controlled and coherent.
+
+If the user selects a supported naming convention for a token category, TokenForge should apply that convention consistently across the relevant scale or category rather than allowing isolated arbitrary renaming.
+
+For example, if a spacing scale uses a numeric convention, changing it to a supported T-shirt-size convention should produce a coherent naming mapping for the relevant spacing scale rather than allowing individual spacing tokens to be renamed independently.
 
 The distinction is:
 
@@ -255,6 +311,7 @@ The distinction is:
     Archetype
         ↓
     Specific architecture
+    & supported naming conventions
 
     Project
         ↓
@@ -329,6 +386,8 @@ The relevant states depend on the component and archetype.
 
 State representation should allow TokenForge to test whether the system remains understandable and usable when interface conditions change.
 
+The Component Lab should provide the appropriate state controls or interactions for exercising these states.
+
 ---
 
 ## 13. Modes and Themes
@@ -370,11 +429,13 @@ For example, a colour may be valid as an isolated value but become problematic w
 - A selected state
 - A layered surface
 
-TokenForge therefore evaluates relevant accessibility relationships through the Validation and Component systems.
+TokenForge therefore evaluates relevant accessibility relationships through the deterministic Validation system, using contextual information from the token system and Component Lab where applicable.
 
 The Design System document defines the expectation.
 
 The Validation system performs the actual evaluation.
+
+The Component Lab provides visual and contextual stress testing but does not become an independent validation authority.
 
 ---
 
@@ -511,7 +572,7 @@ Generation combines:
 2. Selected archetype
 3. Token Model capabilities
 4. Generation rules
-5. Applicable validation requirements
+5. Archetype-defined requirements and metadata that the Validation system may subsequently evaluate
 
 The resulting system should be:
 
@@ -524,6 +585,8 @@ The resulting system should be:
 
 Generation creates a starting system rather than a final answer.
 
+Generation does not perform the authoritative system validation.
+
 ---
 
 ## 20. User Modification
@@ -533,12 +596,16 @@ Users should be able to modify supported aspects of the generated system.
 Depending on the selected archetype and token type, this may include:
 
 - Values
-- Names
+- Supported naming conventions
 - References
 - Scales
 - Semantic assignments
 - Supported token groups
 - Supported states
+
+Naming changes must remain within the supported naming architecture for the relevant category.
+
+Users should not be able to create arbitrary isolated names that break the coherence of an established token scale or naming convention.
 
 Changes should propagate through dependent components and validation where relevant.
 
@@ -554,7 +621,7 @@ The relationship is:
 
     Design System
          ↓
-    Validation
+    System Validation
          ↓
     Results
          ↓
@@ -572,6 +639,8 @@ Validation may identify:
 - Other defined system problems
 
 Validation results do not become part of the design-system values themselves.
+
+Component Lab feedback may help the user identify problems visually, but the deterministic Validation system remains authoritative for defined validation rules.
 
 ---
 
@@ -595,6 +664,8 @@ The exported representation is not a second source of truth.
 
 If the user changes the design system after an export, the export should be treated as an older representation until regenerated.
 
+The Component Lab is not a required step in this workflow.
+
 ---
 
 ## 23. Standards Compatibility
@@ -611,7 +682,7 @@ The distinction is:
             ↓
        Export Adapter
             ↓
-      DTCG / CSS / JSON /
+      DTCG / CSS /
       Tailwind / TypeScript
             ↓
        External Project
@@ -661,28 +732,38 @@ V1 requires:
 - Validation relationships
 - Exportable structure
 
+The Component Lab is included as a visualisation and stress-testing environment using the supported V1 reference components.
+
+V1 does not require:
+
+- A production component-library generator
+- Production component code generation
+- Component code export
+- Components as a prerequisite for export
+
 V1 does not require every possible design-token capability.
 
 Advanced capabilities should only be introduced when they provide clear product value.
 
 ---
 
-## 26. What Makes a System Complete?
+## 26. What Makes a System Ready for Export?
 
-A TokenForge design system should be considered complete enough for export when it has:
+A TokenForge design system should be considered ready for export when it has:
 
 1. A defined project foundation.
 2. A selected archetype.
 3. A generated and user-reviewed token structure.
 4. Valid token relationships.
 5. The required semantic roles for its supported system.
-6. Relevant component usage.
-7. No blocking validation problems.
-8. Passed the required export-readiness checks for the selected format.
+6. No blocking system-validation problems.
+7. Passed the required export-readiness checks for the selected format.
 
-"Complete" does not mean that every possible design token exists.
+The Component Lab may be used to inspect and stress-test the system before export, but Component Lab completion is not a requirement for export.
 
-It means the system is coherent, usable and sufficiently validated for its intended purpose.
+"Ready for export" does not mean that every possible design token exists.
+
+It means the system is coherent, usable and sufficiently validated for the selected export target.
 
 ---
 
@@ -721,11 +802,19 @@ Its core structure is:
          ↓
     Semantic Tokens
          ↓
-    Components
-         ↓
-    Validation
-         ↓
-    Export
+    User-Approved Token System
+         ├───────────────→ Component Lab
+         │                  ↓
+         │            Visualisation
+         │            & Stress Testing
+         │
+         └───────────────→ System Validation
+                            ↓
+                       Export Selection
+                            ↓
+                     Export Readiness
+                            ↓
+                          Export
 
 The selected archetype determines the initial architecture.
 
@@ -733,11 +822,11 @@ The Token Model provides the common underlying structure.
 
 The user owns and refines the resulting system.
 
-Components demonstrate how the system behaves.
+Components demonstrate how the system behaves without becoming a required workflow stage or production component library.
 
-Validation determines whether the system contains detectable problems.
+Validation determines whether the system contains detectable problems according to defined rules.
 
-Export transforms the approved system into an external representation.
+Export transforms the approved and export-ready system into an external representation.
 
 The central principle is:
 
