@@ -63,8 +63,6 @@ The primary workflow is linear:
       ↓
     Edit
       ↓
-    Components
-      ↓
     Validate
       ↓
     Export
@@ -137,7 +135,7 @@ Validation can provide warnings, errors, manual corrections and safe determinist
 
 Users can export the resulting token system into the four supported V1 formats:
 
-- JSON
+- DTCG-compatible JSON
 - CSS
 - Tailwind CSS
 - JavaScript / TypeScript
@@ -200,9 +198,9 @@ V1 supports exactly four export targets:
 
 | Format | Primary Use |
 |---|---|
-| JSON | Machine-readable token data |
+| JSON | DTCG-compatible JSON |
 | CSS | Web applications using CSS custom properties |
-| Tailwind CSS | Tailwind v4 applications using CSS @theme variables (including NativeWind mobile projects)|
+| Tailwind CSS | Tailwind v4 applications using CSS @theme variables |
 | JavaScript / TypeScript | Application code and programmatic token consumption |
 
 The export system is intentionally limited to these formats for V1.

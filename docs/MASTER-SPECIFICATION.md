@@ -35,8 +35,6 @@ The minimum complete workflow is:
         ↓
     Token Editing
         ↓
-    Component Testing
-        ↓
     System Validation
         ↓
     Export Selection

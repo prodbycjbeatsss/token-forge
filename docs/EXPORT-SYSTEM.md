@@ -37,9 +37,9 @@ It does not define the underlying token model, generate design tokens, or perfor
 
 TokenForge V1 supports four export formats:
 
-1. JSON
+1. DTCG-compatible JSON
 2. CSS
-3. Tailwind CSS
+3. Tailwind v4 CSS
 4. JavaScript / TypeScript
 
 The V1 export system should remain limited to these formats.
@@ -201,7 +201,7 @@ The adapter converts the canonical TokenForge representation into the target rep
             ↓
        Export Adapter
        ↙     ↓      ↘
-     CSS    JSON    Tailwind
+     CSS    JSON    Tailwind v4
             ...
        JavaScript / TypeScript
 
@@ -470,7 +470,7 @@ For example:
     TokenForge System
         ├── JSON
         ├── CSS
-        ├── Tailwind CSS
+        ├── Tailwind v4 CSS
         └── JavaScript / TypeScript
 
 Each format is evaluated independently.
@@ -505,7 +505,7 @@ TokenForge V1 must support:
 
 - JSON export
 - CSS export
-- Tailwind CSS export (v4 minimum)
+- Tailwind CSS v4 export
 - JavaScript / TypeScript export
 - Complete system export
 - Format-specific readiness validation
@@ -565,7 +565,7 @@ TokenForge V1 exports a validated token system into four practical development f
 
     JSON
     CSS
-    Tailwind CSS
+    Tailwind v4 CSS
     JavaScript / TypeScript
 
 The system is validated before export format selection.

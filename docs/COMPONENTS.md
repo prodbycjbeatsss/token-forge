@@ -3,7 +3,7 @@
 **Project:** TokenForge  
 **Document:** Components  
 **Status:** Active  
-**Version:** 1.1  
+**Version:** 1.2  
 **Last Updated:** 21 August 2026  
 **Purpose:** Define the V1 component model, reference components, token consumption, states, validation relationships, and Component Lab responsibilities.
 
@@ -13,7 +13,7 @@
 
 The Component system provides the layer between TokenForge's token system and realistic interface usage.
 
-Its purpose is to demonstrate, exercise and validate how a user's design tokens behave when applied to reusable interface components.
+Its purpose is to demonstrate, exercise and visually stress-test how a user's design tokens behave when applied to reusable interface components.
 
 Components are therefore not simply collections of tokens.
 
@@ -29,7 +29,9 @@ A component combines:
 - Accessibility considerations
 - Validation relationships
 
-The core relationship is:
+The Component Lab is a visualisation and design-system stress-testing surface. It is not a mandatory stage in the TokenForge workflow and does not perform validation itself.
+
+The core relationships are:
 
     Primitive Tokens
           ↓
@@ -38,10 +40,20 @@ The core relationship is:
     Component Usage
           ↓
     Component Preview
-          ↓
-    Validation
 
-The Component Lab allows users to see how their token system behaves in realistic interface contexts before exporting it.
+And independently:
+
+    Token System
+          +
+    Component Usage
+          ↓
+    Validation Engine
+          ↓
+    Validation Results
+          ↓
+    Component Lab
+
+The Component Lab allows users to see how their token system behaves in realistic interface contexts while editing their system.
 
 ---
 
@@ -62,6 +74,10 @@ For example:
 
 Components therefore act as a practical stress test for the design system.
 
+The Component Lab does not replace the Validation Engine.
+
+Validation remains responsible for evaluating rules and producing validation results. The Component Lab presents relevant results alongside the visual preview so users can understand the practical impact of those results.
+
 ---
 
 # 3. Component Philosophy
@@ -81,6 +97,8 @@ They are not intended to replace production component libraries.
 
 The user should ultimately be able to export their design system and use it with their preferred implementation framework.
 
+V1 does not provide framework-specific component code generation or component code export.
+
 ---
 
 # 4. Component Architecture
@@ -95,7 +113,7 @@ A component is conceptually structured as:
     ├── States
     ├── Token Usage
     ├── Accessibility
-    └── Validation
+    └── Validation Relationships
 
 Not every component requires every property.
 
@@ -116,9 +134,13 @@ while a Button may have:
     ├── States
     ├── Token Usage
     ├── Accessibility
-    └── Validation
+    └── Validation Relationships
 
 The model must support component-specific differences without requiring every component to use an identical structure.
+
+The Component Lab consumes the component definition and current token system to produce a visual preview.
+
+Validation remains an independent system that evaluates the applicable token relationships and component usage.
 
 ---
 
@@ -145,6 +167,8 @@ For example:
 The component should normally consume semantic tokens rather than directly referencing primitives.
 
 This preserves the separation between foundational values and their intended interface meaning.
+
+The Component Lab must consume the canonical token system and must not maintain a separate copy of token values.
 
 ---
 
@@ -174,9 +198,13 @@ This prevents unnecessary token proliferation.
 
 # 7. Component Anatomy
 
-Each component should define its relevant visual anatomy. 
+Each component should define its relevant visual anatomy.
 
-Anatomy allows TokenForge to associate token usage and validation requirements with meaningful component parts. Every anatomical part must be explicitly bound to the specific token IDs it consumes, allowing the UI to react to downstream validation states.
+Anatomy allows TokenForge to associate token usage and validation relationships with meaningful component parts.
+
+Each anatomical part should reference the specific token IDs it consumes where applicable.
+
+This allows the system to determine which component usage is affected when a token changes.
 
 For example:
 
@@ -196,6 +224,8 @@ Or:
     ├── Trailing Icon
     ├── Helper Text
     └── Error Message
+
+The Component Lab does not need to implement a separate validation system for each anatomical part.
 
 ---
 
@@ -360,7 +390,7 @@ The Button is one of the primary TokenForge stress-test components.
     Focused
     Disabled
 
-### Token categories exercised
+### Design-system capabilities exercised
 
 - Colour
 - Typography
@@ -398,7 +428,7 @@ Icon Button represents a compact interactive control.
     Focused
     Disabled
 
-### Token categories exercised
+### Design-system capabilities exercised
 
 - Colour
 - Sizing
@@ -433,7 +463,7 @@ Badge represents compact semantic information.
 
 Badge does not require interactive states in V1.
 
-### Token categories exercised
+### Design-system capabilities exercised
 
 - Colour
 - Typography
@@ -468,7 +498,7 @@ Text Field is a major input validation target.
     Disabled
     Error
 
-### Token categories exercised
+### Design-system capabilities exercised
 
 - Colour
 - Typography
@@ -505,7 +535,7 @@ Select represents a field that exposes a selection interface.
     Error
     Open
 
-### Token categories exercised
+### Design-system capabilities exercised
 
 - Colour
 - Typography
@@ -515,7 +545,7 @@ Select represents a field that exposes a selection interface.
 - Border
 - Focus
 - Overlay
-- State tokens
+- State
 
 The Select should visually demonstrate the relationship between the field and its open selection state.
 
@@ -540,7 +570,7 @@ Checkbox represents binary or multi-selection.
     Disabled
     Error
 
-### Token categories exercised
+### Design-system capabilities exercised
 
 - Colour
 - Border
@@ -574,7 +604,7 @@ Radio represents mutually exclusive selection.
     Disabled
     Error
 
-### Token categories exercised
+### Design-system capabilities exercised
 
 - Colour
 - Border
@@ -607,7 +637,7 @@ Switch represents a binary setting.
     Focused
     Disabled
 
-### Token categories exercised
+### Design-system capabilities exercised
 
 - Colour
 - Sizing
@@ -640,7 +670,7 @@ Tabs represent navigation between related views.
     Selected
     Disabled
 
-### Token categories exercised
+### Design-system capabilities exercised
 
 - Typography
 - Colour
@@ -679,7 +709,7 @@ Optional:
     Elevated
     Outlined
 
-### Token categories exercised
+### Design-system capabilities exercised
 
 - Surface
 - Colour
@@ -711,7 +741,7 @@ Dialog represents a temporary surface above the main interface.
     Open
     Closed
 
-### Token categories exercised
+### Design-system capabilities exercised
 
 - Surface
 - Overlay
@@ -743,7 +773,7 @@ Tooltip provides contextual information associated with another control.
     Hidden
     Visible
 
-### Token categories exercised
+### Design-system capabilities exercised
 
 - Surface
 - Typography
@@ -884,25 +914,39 @@ This allows users to modify the archetype-generated system and create their own 
 
 The Component Lab should render components using the user's current token system.
 
-Example:
+The relationship is:
 
     User Token System
           ↓
-    Button
+    Component Definition
           ↓
     Rendered Preview
 
-When the user changes a relevant token:
+The Component Lab is not a mandatory workflow stage.
+
+It provides visual feedback while the user is creating and refining their token system.
+
+When a relevant token changes:
 
     Token change
          ↓
-    Dependency update
+    Affected derived state invalidated
          ↓
     Component preview updates
-         ↓
-    Validation re-runs
 
-This creates a direct relationship between token editing and practical UI outcomes.
+Validation is handled independently:
+
+    Token System
+          +
+    Relevant Component Usage
+          ↓
+    Validation Engine
+          ↓
+    Validation Results
+          ↓
+    Component Lab displays relevant results
+
+The Component Lab does not initiate or perform validation mathematics.
 
 ---
 
@@ -960,7 +1004,9 @@ This makes the Component Lab a practical design-system testing environment.
 
 Components must expose relevant validation results visually.
 
-Because components do not perform validation mathematics themselves, they rely on a strict data contract with the Validation Engine. When the Validation Engine flags an issue, the Component Lab UI renders the appropriate warning or error indicator on the affected component.
+Because components do not perform validation mathematics themselves, they rely on a strict data contract with the Validation Engine.
+
+When the Validation Engine flags an issue, the Component Lab UI renders the appropriate warning or error indicator on the affected component.
 
 Examples:
 
@@ -1202,20 +1248,29 @@ For example:
               ↓
     Button changes
               ↓
-    Button validation re-runs
+    Affected component preview updates
+
+The Validation Engine separately determines which validation results are affected and re-evaluates them according to its own dependency rules.
 
 ---
 
 # 41. Component-to-Validation Data Contract
 
-The Component Lab must consume Validation results rather than implement a second validation engine. To avoid unnecessary architectural complexity (such as replicating CSS state inheritance logic in JavaScript), TokenForge V1 uses a simplified, component-level data contract:
+The Component Lab must consume Validation results rather than implement a second validation engine.
+
+To avoid unnecessary architectural complexity, TokenForge V1 uses a simplified component-level data contract:
 
 1. **Validation Output:** When the Validation Engine evaluates a rule, it outputs a machine-readable result that includes an array of `affectedTokenIds`.
-2. **Component Token List:** The Component Lab maintains a flat list of all token IDs actively consumed by the currently selected component, variant, and state.
-3. **Intersection & Warning:** The Component Lab performs a simple array intersection. If the component consumes *any* token present in the active error list, the UI flags the component globally (e.g., displaying a warning badge next to the component's title and listing the errors in the validation panel).
-4. **Visual Verification:** The UI does not need to draw bounding boxes around specific DOM nodes. The user relies on the live visual preview to see the practical failure (e.g., white text on a cream background) and uses the error panel to identify exactly which tokens are responsible.
 
-This ensures the Component Lab remains a lightweight visualiser, surfacing errors effectively without over-engineering deep anatomical state tracking.
+2. **Component Token List:** The Component Lab maintains a flat list of all token IDs actively consumed by the currently selected component, variant and state.
+
+3. **Intersection & Warning:** The Component Lab performs a simple array intersection. If the component consumes any token present in the active error list, the UI flags the component globally, for example by displaying a warning badge next to the component title and listing the errors in the validation panel.
+
+4. **Visual Verification:** The UI does not need to draw bounding boxes around specific DOM nodes. The user relies on the live visual preview to see the practical failure and uses the validation panel to identify the relevant validation result and affected tokens.
+
+This ensures the Component Lab remains a lightweight visualiser and does not duplicate validation logic.
+
+The Component Lab may display validation results at component, variant or state level where the Validation Engine provides sufficient context.
 
 ---
 
@@ -1418,7 +1473,7 @@ Its purpose is to:
 - Expose token relationships
 - Demonstrate component states
 - Preview archetype-generated systems
-- Identify contextual validation problems
+- Surface contextual validation results
 - Help users understand the practical consequences of token changes
 
 The V1 component catalogue contains 12 reference components:
@@ -1436,7 +1491,7 @@ The V1 component catalogue contains 12 reference components:
     Dialog
     Tooltip
 
-The central relationship is:
+The central relationships are:
 
     Primitive
         ↓
@@ -1447,9 +1502,21 @@ The central relationship is:
     State / Variant
         ↓
     Preview
+
+And independently:
+
+    Token System
+        +
+    Component Usage
         ↓
-    Validation
+    Validation Engine
+        ↓
+    Validation Results
+        ↓
+    Component Lab
 
 The Component Lab should remain a **design-system stress-testing and visualisation environment**, not a full production component library.
 
 The architecture must remain extensible so additional components and eventual component authoring can be introduced without redesigning the Token Model.
+
+V1 does not include component code generation or component code export.
