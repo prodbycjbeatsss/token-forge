@@ -3,7 +3,7 @@
 **Project:** TokenForge  
 **Document:** Token Model  
 **Status:** Active  
-**Version:** 1.1  
+**Version:** 1.2  
 **Last Updated:** 21 August 2026  
 **Purpose:** Define the canonical token structure, types, relationships, naming architecture, and behaviour used throughout TokenForge.
 
@@ -262,7 +262,7 @@ For example, a spacing token may internally be represented as a structured token
 
 This is important because some export standards, including DTCG, use periods as alias syntax and therefore do not permit periods in token or group names.
 
-TokenForge should preserve hierarchy structurally and allow each export adapter to produce the appropriate target representation.
+TokenForge should preserve hierarchy structurally and allow each export adapter to safely perform syntax translations (e.g., nesting objects) without mutating the core system data.
 
 ---
 
@@ -338,7 +338,7 @@ Token names are part of the design-system architecture.
 
 TokenForge therefore does not treat token naming as unrestricted free-form text editing.
 
-The user can customise supported naming conventions, but the system must preserve consistency within each token category.
+The user customises supported naming conventions by selecting from predefined options (e.g., via radio buttons), and the system ensures consistency within each token category.
 
 ### Category-level naming
 
@@ -408,25 +408,23 @@ while preserving the original scale relationships.
 
 ---
 
-## 12. Primitive Naming
+## 12. Primitive Naming Customisation
 
-Primitive token naming can provide greater customisation than semantic naming.
+Primitive token naming can provide greater customisation than semantic naming, provided it remains structurally safe.
 
-Archetypes may provide supported naming conventions for categories such as:
+Archetypes provide predefined naming conventions (dictionaries) for categories such as:
 
 - Spacing
 - Colour scales
 - Typography scales
 - Radius
-- Elevation
 - Motion
-- Other appropriate primitive categories
 
-The user can select from or customise supported conventions where the archetype permits it.
+The user customises their naming structure by selecting one of these predefined conventions. 
 
-However, naming changes must remain internally coherent.
+**TokenForge V1 strictly prohibits free-text renaming of individual primitive tokens if it breaks category scale consistency.** 
 
-TokenForge should favour category-level transformations over individual token renaming.
+The system relies on predefined architectural choices (e.g., a "Select Scale Format" radio group) to execute category-level transformations safely.
 
 ---
 
@@ -447,9 +445,7 @@ These names describe what the token is for rather than merely what value it cont
 
 Archetypes therefore establish the semantic vocabulary used by their generated systems.
 
-Users may be allowed to customise supported semantic naming conventions in the future, but TokenForge must prevent changes that make the semantic architecture contradictory, ambiguous or incoherent.
-
-Semantic naming should therefore be treated as a controlled part of the system architecture rather than unrestricted text.
+Because semantic architecture must remain coherent for component consumption and validation, TokenForge restricts arbitrary changes to the semantic vocabulary. Semantic naming should be treated as a controlled part of the system architecture rather than unrestricted text.
 
 ---
 
@@ -479,11 +475,37 @@ Component token naming must remain consistent with:
 - Token relationships
 - The selected archetype
 
-Users should not be able to arbitrarily rename component tokens in a way that breaks these relationships.
+Users must not be able to arbitrarily rename component tokens in a way that breaks the hardcoded relationships expected by the Component Lab previews and Validation engine.
 
 ---
 
-## 15. Token References
+## 15. Component State Tokens & Schema
+
+Interactive states (e.g., Hover, Pressed, Disabled) are structural properties of a component-level token. They are **not** global Modes.
+
+In the underlying Token Model data schema, a stateful token is represented by explicit contextual metadata.
+
+For example, the background colour of a hovered primary button is internally modelled as:
+
+    Token Identity
+        ID: "btn-primary-bg-hover"
+        Type: "color"
+        Reference: "color.action.primary.hover"
+        Context:
+            Component: "Button"
+            Variant: "Primary"
+            Role: "Background"
+            State: "Hover"
+
+By defining `State` as an explicit property in the data layer, TokenForge enables:
+1. The Validation Engine to test "Hover" contrast rules specifically.
+2. The Component Lab to deterministically apply the correct token when a user triggers a CSS hover event in the preview UI.
+
+States exist independently of Themes or Modes.
+
+---
+
+## 16. Token References
 
 TokenForge supports references between tokens.
 
@@ -513,7 +535,7 @@ If a target format cannot preserve a reference directly, the export adapter must
 
 ---
 
-## 16. Token Dependencies
+## 17. Token Dependencies
 
 TokenForge maintains awareness of relationships between tokens.
 
@@ -540,7 +562,7 @@ Unresolved references must also be detected by Validation.
 
 ---
 
-## 17. Token Metadata
+## 18. Token Metadata
 
 Where required, tokens may contain metadata describing their purpose, structure or origin.
 
@@ -554,13 +576,14 @@ Potential metadata includes:
 - Group
 - Source
 - Mode
+- Context (Variant/State)
 - Validation information
 
 Metadata should support editing, validation and export without unnecessarily increasing the complexity presented to users.
 
 ---
 
-## 18. Modes and Themes
+## 19. Modes and Themes
 
 The Token Model must be capable of supporting multiple modes or themes.
 
@@ -584,11 +607,11 @@ For example:
 
 Support for multiple modes does not require every V1 archetype to expose multiple themes.
 
-The underlying model must simply avoid preventing future support.
+The underlying model must simply avoid preventing future support. Modes apply globally to token values; they are distinct from interactive component `States`.
 
 ---
 
-## 19. Validation State
+## 20. Validation State
 
 TokenForge may associate validation information with tokens and their relationships.
 
@@ -609,7 +632,7 @@ The Token Model therefore provides the relationships and structure required for 
 
 ---
 
-## 20. Archetype Relationship
+## 21. Archetype Relationship
 
 The Token Model provides the common capabilities shared across TokenForge archetypes.
 
@@ -642,7 +665,7 @@ The archetype therefore acts as the system blueprint while the Token Model acts 
 
 ---
 
-## 21. User Modification
+## 22. User Modification
 
 Generated tokens are recommendations and starting structures rather than immutable output.
 
@@ -652,14 +675,12 @@ Depending on the token category and archetype, this may include:
 
 - Values
 - References
-- Naming conventions
+- Naming conventions (via predefined scale selection)
 - Scales
 - Semantic assignments
 - Supported groups
 - Supported metadata
 - Modes where available
-
-Token names should not be treated as unrestricted individual text fields.
 
 Changes to naming conventions must preserve category-level consistency.
 
@@ -669,7 +690,7 @@ Consequential changes should be made clear to the user.
 
 ---
 
-## 22. Source of Truth
+## 23. Source of Truth
 
 Within a TokenForge project, the generated and subsequently modified token system becomes the project's source of truth.
 
@@ -697,42 +718,37 @@ Exported files are representations of the source of truth rather than independen
 
 ---
 
-## 23. Standards Compatibility
+## 24. Standards Compatibility & Translation Exemption
 
 TokenForge should remain compatible with recognised design-token standards where practical.
 
-The Design Tokens Community Group (DTCG) format is an important interoperability target.
+The Design Tokens Community Group (DTCG) format is an important interoperability target. However, the internal TokenForge model should not be unnecessarily constrained by the strict syntax rules of an external interchange format (such as DTCG prohibiting the use of `.`).
 
-However, the internal TokenForge model should not be unnecessarily constrained by the exact structure of an external interchange format.
+To resolve conflicts between internal architectural models and external standards, the **Deterministic Translation Exemption** applies:
 
-The intended relationship is:
+> Export Adapters are explicitly permitted to perform deterministic syntax translations—such as converting internal hierarchy strings (e.g. `color.text.primary`) into nested JSON objects, or replacing invalid characters to satisfy target compiler constraints. 
 
-    TokenForge Internal Model
-              ↓
-          Export Adapter
-              ↓
-    DTCG / CSS / Tailwind / JavaScript-TypeScript
-
-The internal model must therefore remain structurally robust enough to represent the design system independently of a particular export syntax.
+This translation is purely a representation step and does **not** violate the rule against mutating the canonical source system. 
 
 Export adapters are responsible for translating the internal model into the conventions and limitations of the selected target format.
 
 ---
 
-## 24. V1 Requirements
+## 25. V1 Requirements
 
 TokenForge V1 requires the Token Model to support:
 
 - Primitive tokens
 - Semantic tokens
 - Component consumption
+- Component state schema (Hover, Disabled, etc.)
 - Token references
 - Token dependencies
 - Stable token identity
 - V1 primitive token types
 - V1 composite token types
 - Structured token hierarchy
-- Category-level naming conventions
+- Category-level naming conventions (via predefined selection)
 - Semantic naming constraints
 - Token metadata required by the product
 - Archetype-generated structures
@@ -747,7 +763,7 @@ The model should remain extensible without unnecessarily increasing V1 complexit
 
 ---
 
-## 25. V1 Boundary
+## 26. V1 Boundary
 
 The Token Model defines the underlying token system rather than the complete behaviour of every TokenForge subsystem.
 
@@ -755,7 +771,7 @@ The Token Model defines the underlying token system rather than the complete beh
 |---|---|
 | Product requirements | `PRODUCT.md` |
 | Archetype definitions | `ARCHETYPES.md` |
-| Colour generation and colour mathematics | `COLOUR-ENGINE.md` |
+| Colour generation and mathematics | `COLOUR-ENGINE.md` |
 | Validation rules and evaluation | `VALIDATION.md` |
 | Component catalogue and behaviour | `COMPONENTS.md` |
 | Export implementation | `EXPORT-SYSTEM.md` |
@@ -766,7 +782,7 @@ This separation prevents the Token Model from becoming an uncontrolled collectio
 
 ---
 
-## 26. Summary
+## 27. Summary
 
 The Token Model provides the common foundation that allows TokenForge to represent different design-system architectures while maintaining a consistent internal model.
 

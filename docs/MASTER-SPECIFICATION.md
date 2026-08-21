@@ -167,7 +167,7 @@ V1 provides four export formats:
 - Tailwind CSS
 - JavaScript / TypeScript
 
-Users can export the complete system or select token categories.
+Users can export the complete system
 
 Each export format has an independent readiness check.
 
@@ -258,10 +258,9 @@ V1 includes:
 - Manual correction
 - Export readiness validation
 - Complete-system export
-- Token-category selection
 - JSON export
 - CSS export
-- Tailwind CSS export
+- Tailwind CSS (V4) export
 - JavaScript / TypeScript export
 
 ---

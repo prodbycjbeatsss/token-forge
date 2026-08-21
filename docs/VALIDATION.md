@@ -3,7 +3,7 @@
 **Project:** TokenForge  
 **Document:** Validation  
 **Status:** Active  
-**Version:** 1.1  
+**Version:** 1.2  
 **Last Updated:** 21 August 2026  
 **Purpose:** Define how TokenForge evaluates design-token systems, reports validation results, provides safe automatic remediation, supports manual correction, and determines export readiness.
 
@@ -137,13 +137,14 @@ This separation keeps both systems deterministic and easier to reason about.
 
 Every validation rule produces a result.
 
-A result contains enough information for the user to understand and act upon the problem.
+A result contains enough information for the user to understand and act upon the problem, as well as machine-readable data for the UI to bind to.
 
 A result should identify:
 
 - Status
 - Rule
-- Affected token or relationship
+- Machine-readable `affectedTokenIds` array (Strict Data Contract for UI/Component binding)
+- Affected token or relationship (Human-readable)
 - Explanation
 - Why the result matters
 - Recommended action
@@ -334,9 +335,9 @@ An inconsistent mixture of naming conventions within that category is not.
 
 Where the TokenForge internal model is intended for DTCG export, export readiness must check the restrictions of the selected DTCG representation.
 
-The DTCG 2025.10 specification prohibits token and group names from beginning with `$` and prohibits `.`, `{` and `}` within token or group names because of the syntax used for references. 1
+The latest available Design Tokens Community Group (DTCG) Candidate Recommendation prohibits token and group names from beginning with `$` and prohibits `.`, `{` and `}` within token or group names because of the syntax used for references.
 
-These restrictions should not unnecessarily become global TokenForge naming restrictions.
+These restrictions must not unnecessarily become global TokenForge naming restrictions.
 
 Instead:
 
@@ -348,9 +349,9 @@ Instead:
             ↓
     DTCG Readiness Validation
             ↓
-    DTCG-specific naming checks
+    DTCG-specific naming checks & Deterministic Syntax Translation
 
-This allows TokenForge's internal model to remain useful independently of a specific export format.
+This allows TokenForge's internal model to remain useful independently of a specific export format, relying on Export Adapters to safely translate invalid characters for the target compiler without mutating the core database.
 
 ---
 
@@ -656,9 +657,7 @@ Examples include:
 - Insufficient contrast in a component state
 - Missing required semantic role
 
-The component system remains responsible for defining the components.
-
-Validation remains responsible for evaluating them.
+To facilitate this without duplicating logic, the Validation Engine operates on a strict data contract: every validation result includes an array of `affectedTokenIds`. The Component Lab subscribes to this array, allowing the UI to visually flag the exact anatomical part of a component that caused the validation failure, directly within the component preview.
 
 ---
 
@@ -798,4 +797,3 @@ Changing the token system or changing the selected export format can invalidate 
 The core principle is:
 
 > **Validate the system first. Validate the representation second.**
-```2

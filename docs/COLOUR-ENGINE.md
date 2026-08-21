@@ -3,7 +3,8 @@
 **Project:** TokenForge  
 **Document:** Colour Engine  
 **Status:** Active  
-**Version:** 1.0  
+**Version:** 1.1  
+**Last Updated:** 21 August 2026  
 **Purpose:** Define how TokenForge accepts brand colours, generates colour palettes and semantic colour roles, handles colour-space and gamut constraints, evaluates accessibility, and incorporates user refinement.
 
 ---
@@ -341,11 +342,9 @@ The V1 process is:
                  ↓
            Re-evaluate candidate
 
-TokenForge should not rely on simple RGB channel clipping as its primary gamut-correction method.
+TokenForge should not rely on crude RGB channel clipping as its primary gamut-correction method.
 
-Where appropriate, the implementation should use a perceptual gamut-mapping approach consistent with the relevant CSS Color specifications and established implementations.
-
-Color.js is an implementation reference for these operations, not the normative authority. Normative behaviour should be derived from the applicable standards.
+To ensure technical feasibility without requiring bespoke implementations of complex perceptual gamut-mapping algorithms from scratch, TokenForge V1 explicitly permits and recommends the use of standard-compliant, vetted colour-science libraries (such as `Color.js`) to execute gamut checks and mapping aligned with W3C CSS Color 4 specifications.
 
 ---
 
@@ -541,7 +540,7 @@ The V1 pipeline is:
                  ↓
     9. Check target gamut
                  ↓
-    10. Apply gamut mapping where required
+    10. Apply gamut mapping where required (via Color.js or equivalent)
                  ↓
     11. Evaluate WCAG contrast relationships
                  ↓
@@ -570,7 +569,7 @@ V1 should support:
 - Semantic colour mapping
 - Neutral generation
 - Gamut detection
-- Gamut mapping
+- Gamut mapping (via standard library integration)
 - WCAG contrast measurement
 - Contrast-aware candidate adjustment
 - User overrides
@@ -585,6 +584,7 @@ The architecture should be prepared for wider-gamut output, including Display P3
 
 The following should not be required for the first implementation:
 
+- Bespoke implementation of colour-science algorithms from raw mathematical equations
 - Automatic archetype switching
 - Full multi-theme migration
 - Automatic dark-mode generation as a separate product workflow
@@ -611,14 +611,13 @@ Primary references include:
 - W3C CSS Color Module Level 4
 - WCAG 2.2
 
-### Industry References
+### Implementation Dependencies
 
-Established systems may inform implementation strategy and semantic approaches without overriding standards.
+Established, tested libraries are approved for executing technical colour operations according to standard algorithms.
 
-Examples include:
+Primary implementation reference:
 
-- Material Design 3
-- Color.js implementation documentation
+- `Color.js`
 
 ### Research
 
@@ -632,13 +631,13 @@ The complete source registry and source tiers are maintained in `SOURCES.md`.
 
 ## 26. Implementation Authority
 
-When sources disagree, TokenForge should follow this order:
+When implementing colour mathematics, TokenForge should follow this order:
 
-    Applicable standard
+    Applicable standard (e.g. W3C CSS Color 4)
+          ↓
+    Approved implementation library (e.g. Color.js)
           ↓
     Official technical documentation
-          ↓
-    Established implementation/reference
           ↓
     Research
           ↓
@@ -688,7 +687,7 @@ Its architecture deliberately separates three concerns:
     USER REFINEMENT
     What does the user ultimately want their system to be?
 
-OKLCH provides the primary working space for controlled perceptual manipulation, while WCAG relative-luminance calculations provide independent accessibility measurement. Gamut handling ensures generated colours remain representable in their intended output space.
+OKLCH provides the primary working space for controlled perceptual manipulation, while WCAG relative-luminance calculations provide independent accessibility measurement. Gamut handling ensures generated colours remain representable in their intended output space using vetted implementations such as `Color.js`.
 
 The Colour Engine generates recommendations; the archetype provides the design direction; the user remains the final authority over the resulting design system.
 

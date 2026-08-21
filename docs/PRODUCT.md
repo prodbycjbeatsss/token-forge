@@ -142,7 +142,7 @@ Users can export the resulting token system into the four supported V1 formats:
 - Tailwind CSS
 - JavaScript / TypeScript
 
-Users can export the complete system or select token categories to include.
+Users can export the complete system.
 
 Each selected export format receives its own readiness check.
 
@@ -202,7 +202,7 @@ V1 supports exactly four export targets:
 |---|---|
 | JSON | Machine-readable token data |
 | CSS | Web applications using CSS custom properties |
-| Tailwind CSS | Tailwind-based web applications |
+| Tailwind CSS | Tailwind v4 applications using CSS @theme variables (including NativeWind mobile projects)|
 | JavaScript / TypeScript | Application code and programmatic token consumption |
 
 The export system is intentionally limited to these formats for V1.

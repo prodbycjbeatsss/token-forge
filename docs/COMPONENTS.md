@@ -3,7 +3,8 @@
 **Project:** TokenForge  
 **Document:** Components  
 **Status:** Active  
-**Version:** 1.0  
+**Version:** 1.1  
+**Last Updated:** 21 August 2026  
 **Purpose:** Define the V1 component model, reference components, token consumption, states, validation relationships, and Component Lab responsibilities.
 
 ---
@@ -173,7 +174,9 @@ This prevents unnecessary token proliferation.
 
 # 7. Component Anatomy
 
-Each component should define its relevant visual anatomy.
+Each component should define its relevant visual anatomy. 
+
+Anatomy allows TokenForge to associate token usage and validation requirements with meaningful component parts. Every anatomical part must be explicitly bound to the specific token IDs it consumes, allowing the UI to react to downstream validation states.
 
 For example:
 
@@ -193,8 +196,6 @@ Or:
     ├── Trailing Icon
     ├── Helper Text
     └── Error Message
-
-Anatomy allows TokenForge to associate token usage and validation requirements with meaningful component parts.
 
 ---
 
@@ -955,9 +956,11 @@ This makes the Component Lab a practical design-system testing environment.
 
 ---
 
-# 31. Component Validation
+# 31. Component Validation UI
 
-Components should expose relevant validation results.
+Components must expose relevant validation results visually.
+
+Because components do not perform validation mathematics themselves, they rely on a strict data contract with the Validation Engine. When the Validation Engine flags an issue, the Component Lab UI renders the appropriate warning or error indicator on the affected component.
 
 Examples:
 
@@ -973,9 +976,7 @@ Or:
     ├── ✕ Error border contrast
     └── ✓ Focus indicator
 
-The Component Lab should provide access to the relevant validation result.
-
-The authoritative validation logic remains in the Validation system.
+The Component Lab should provide access to the relevant validation result detail directly from the UI preview.
 
 ---
 
@@ -1205,19 +1206,16 @@ For example:
 
 ---
 
-# 41. Component-to-Validation Dependency
+# 41. Component-to-Validation Data Contract
 
-The Component Lab should consume Validation results rather than implement a second validation engine.
+The Component Lab must consume Validation results rather than implement a second validation engine. To avoid unnecessary architectural complexity (such as replicating CSS state inheritance logic in JavaScript), TokenForge V1 uses a simplified, component-level data contract:
 
-    Token System
-          ↓
-    Validation Engine
-          ↓
-    Validation Results
-          ↓
-    Component Lab
+1. **Validation Output:** When the Validation Engine evaluates a rule, it outputs a machine-readable result that includes an array of `affectedTokenIds`.
+2. **Component Token List:** The Component Lab maintains a flat list of all token IDs actively consumed by the currently selected component, variant, and state.
+3. **Intersection & Warning:** The Component Lab performs a simple array intersection. If the component consumes *any* token present in the active error list, the UI flags the component globally (e.g., displaying a warning badge next to the component's title and listing the errors in the validation panel).
+4. **Visual Verification:** The UI does not need to draw bounding boxes around specific DOM nodes. The user relies on the live visual preview to see the practical failure (e.g., white text on a cream background) and uses the error panel to identify exactly which tokens are responsible.
 
-This avoids inconsistent validation behaviour between the main Validation screen and the Component Lab.
+This ensures the Component Lab remains a lightweight visualiser, surfacing errors effectively without over-engineering deep anatomical state tracking.
 
 ---
 
